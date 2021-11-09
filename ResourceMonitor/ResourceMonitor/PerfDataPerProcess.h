@@ -33,7 +33,7 @@ public:
 public:
 
 	int nCores;
-	vector<ULONGLONG>* exitedProcIDs;
+	vector<ULONGLONG> exitedProcIDs;
 	double usingPercent;
 	double idlePercent;
 	map<ULONGLONG, PerProcessDataObj>	*m_table;

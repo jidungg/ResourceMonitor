@@ -22,7 +22,7 @@ public:
 	CPerfDataOS();
 	~CPerfDataOS();
 
-	map<ULONGLONG, OSDataObj>	*table;
+	map<ULONGLONG, OSDataObj>	*m_table;
 
 	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
 	virtual void GetData();

@@ -55,7 +55,7 @@ void CDiskMonitorView::OnInitialUpdate()
 void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
-	m.lock();
+
 	map<ULONGLONG, PerProcessDataObj>	*table =perfData->m_table;
 	for (auto iter = table->begin(); iter != table->end(); iter++)
 	{
@@ -88,7 +88,7 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 		}
 
 	}
-	m.unlock();
+
 
 }
 
