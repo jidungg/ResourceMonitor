@@ -102,6 +102,7 @@ void CPerfDataPerProcess::GetData()
 	for (auto iter = exitedProcIDs.begin(); iter != exitedProcIDs.end(); iter++)
 	{
 		m_table->erase(*iter);
+
 	}
 	if (exitedProcIDs.size() > 0)
 	{

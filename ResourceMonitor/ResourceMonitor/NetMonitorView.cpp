@@ -51,7 +51,7 @@ void CNetMonitorView::OnInitialUpdate()
 void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
-	m.lock();
+
 	map<ULONGLONG, PerProcessDataObj>	*table = perfData->m_table;
 	for (auto iter = table->begin(); iter != table->end(); iter++)
 	{
@@ -75,7 +75,7 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 			m_tableList.SetItemText(nIndex, 1, name);
 		}
 	}
-	m.unlock();
+
 }
 void CNetMonitorView::AddPeriodicLog()
 {

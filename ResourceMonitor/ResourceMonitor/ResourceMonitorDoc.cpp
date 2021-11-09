@@ -45,32 +45,40 @@ CResourceMonitorDoc::~CResourceMonitorDoc()
 	//delete m_perfDataManager;
 }
 
-void CResourceMonitorDoc::UpdateViews(CResourceMonitorDoc *doc)
+UINT CResourceMonitorDoc::Update(LPVOID doc)
 {
-	POSITION pos = doc->GetFirstViewPosition();
-	CResourceMonitorView* pView1 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView2 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView3 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView4 = (CResourceMonitorView*)doc->GetNextView(pos);
+	CResourceMonitorDoc* pDoc = (CResourceMonitorDoc*)doc;
+	POSITION pos = pDoc->GetFirstViewPosition();
+	CResourceMonitorView* pView1 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView2 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView3 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView4 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CPerfDataManager *dataManager = pDoc->m_perfDataManager;
 
 	while (true)
 	{
+		dataManager->RefreshData();
 
-		pView1->UpdateView(doc->m_perfDataManager);
-		pView2->UpdateView(doc->m_perfDataManager);
-		pView3->UpdateView(doc->m_perfDataManager);
-		pView4->UpdateView(doc->m_perfDataManager);
+		pView1->UpdateView(dataManager);
+		pView2->UpdateView(dataManager);
+		pView3->UpdateView(dataManager);
+		pView4->UpdateView(dataManager);
+
 		Sleep(UPDATE_INTERVAL);
 	}
+	return 0;
 }
 
-void CResourceMonitorDoc::AddPeriodicLog(CResourceMonitorDoc *doc)
+
+
+UINT CResourceMonitorDoc::AddPeriodicLog(LPVOID doc)
 {
-	POSITION pos = doc->GetFirstViewPosition();
-	CResourceMonitorView* pView1 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView2 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView3 = (CResourceMonitorView*)doc->GetNextView(pos);
-	CResourceMonitorView* pView4 = (CResourceMonitorView*)doc->GetNextView(pos);
+	CResourceMonitorDoc * pDoc = (CResourceMonitorDoc *)doc;
+	POSITION pos = pDoc->GetFirstViewPosition();
+	CResourceMonitorView* pView1 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView2 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView3 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorView* pView4 = (CResourceMonitorView*)pDoc->GetNextView(pos);
 	while (true)
 	{
 
@@ -80,6 +88,7 @@ void CResourceMonitorDoc::AddPeriodicLog(CResourceMonitorDoc *doc)
 		pView4->AddPeriodicLog();
 		Sleep(LOG_INTERVAL);
 	}
+	return 0;
 }
 
 void CResourceMonitorDoc::AtExitProcess(vector<ULONGLONG>* exitedProcIDs)
@@ -102,12 +111,10 @@ BOOL CResourceMonitorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 	m_perfDataManager->m_pDoc = this;
-	m_perfDataManager->StartThread();
 
-	thread t1(UpdateViews,this);
-	t1.detach();
-	thread t2(AddPeriodicLog, this);
-	t2.detach();
+	m_updaterThread = AfxBeginThread(Update, this);
+	m_loggerThread = AfxBeginThread(AddPeriodicLog, this);
+
 	// TODO: 여기에 재초기화 코드를 추가합니다.
 	// SDI 문서는 이 문서를 다시 사용합니다.
 

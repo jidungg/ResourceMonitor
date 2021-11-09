@@ -55,8 +55,8 @@ void CMemMonitorView::OnInitialUpdate()
 void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 	map<ULONGLONG, PerProcessDataObj>	*perfTable = (map<ULONGLONG, PerProcessDataObj> *)dataManager->m_win32PerfFormatProc->m_table;
-	m.lock();
-	map<ULONGLONG, OSDataObj> *osTable =dataManager->m_win32OperatingSystem->table;
+
+	map<ULONGLONG, OSDataObj> *osTable =dataManager->m_win32OperatingSystem->m_table;
 	for (auto iter = perfTable->begin(); iter != perfTable->end(); iter++)
 	{
 		CString id;
@@ -111,7 +111,7 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 			m_farmeList.SetItemText(0, 2, nowUsing);
 		}
 	}
-	m.unlock();
+
 }
 
 void CMemMonitorView::AddPeriodicLog()

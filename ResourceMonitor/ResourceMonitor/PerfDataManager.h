@@ -9,7 +9,7 @@ public:
 	CPerfDataManager(CResourceMonitorDoc* doc);
 	~CPerfDataManager();
 
-	void StartThread();
+	void RefreshData();
 
 	CPerfDataPerProcess* m_win32PerfFormatProc;
 	CPerfData* m_win32DiskDrive;

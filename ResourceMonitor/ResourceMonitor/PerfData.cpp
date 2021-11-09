@@ -132,10 +132,6 @@ void CPerfData::AddEnumerator(LPCTSTR class_name)
 	pConfig = NULL;
 }
 
-void CPerfData::StartRefreshThread(CPerfData* perfData)
-{
-	perfData->GetData();
-}
 
 
 void CPerfData::Refresh()
