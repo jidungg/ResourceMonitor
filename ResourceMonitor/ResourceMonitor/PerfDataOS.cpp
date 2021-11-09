@@ -13,7 +13,7 @@ CPerfDataOS::~CPerfDataOS()
 
 void CPerfDataOS::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
 {
-	table = new map<ULONGLONG, OSDataObj>;
+	m_table = new map<ULONGLONG, OSDataObj>;
 	CPerfData::Init(info, doc);
 }
 
@@ -23,59 +23,57 @@ void CPerfDataOS::GetData()
 	obj.flag = true;
 	ULONGLONG ID;
 	VARIANT propertyVal;
-	while (true)
+
+	CPerfData::Refresh();
+	for (int i = 0; i < dwNumReturned; i++)
 	{
-		CPerfData::Refresh();
-		m.lock();
-		for (int i = 0; i < dwNumReturned; i++)
+		for (size_t j = 0; j < m_nProps; ++j)
 		{
-			for (size_t j = 0; j < m_nProps; ++j)
+			if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal, 0, 0)))
 			{
-				if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal, 0, 0)))
-				{
-					Cleanup();
-					break;
-				}
-				switch (j)
-				{
-				case OS_FREEPHYSICALMEM:
-					obj.freePhysicalMemory = propertyVal.bstrVal;
-					break;
-				case OS_TOTALVISIBLEMEM:
-					obj.totalVisibleMemory = propertyVal.bstrVal;
-					ID = _wtoi64(propertyVal.bstrVal) ;
-					break;
-
-				default:
-					break;
-				}
-				VariantClear(&propertyVal);
+				Cleanup();
+				break;
 			}
-
-			if (table->empty())
+			switch (j)
 			{
-				table->insert({ ID, obj });
-			}
-			else
-			{
-				(*table)[ID] = obj;
-			}
+			case OS_FREEPHYSICALMEM:
+				obj.freePhysicalMemory = propertyVal.bstrVal;
+				break;
+			case OS_TOTALVISIBLEMEM:
+				obj.totalVisibleMemory = propertyVal.bstrVal;
+				ID = _wtoi64(propertyVal.bstrVal) ;
+				break;
 
-			//clear
-
-			obj.Clear();
-			apEnumAccess[i]->Release();
-			apEnumAccess[i] = NULL;
+			default:
+				break;
+			}
+			VariantClear(&propertyVal);
 		}
 
-
-		if (NULL != apEnumAccess)
+		if (m_table->empty())
 		{
-			delete[] apEnumAccess;
-			apEnumAccess = NULL;
+			m_table->insert({ ID, obj });
 		}
-		// Sleep for a second.
-		m.unlock();
-		Sleep(UPDATE_INTERVAL);
+		else
+		{
+			(*m_table)[ID] = obj;
+		}
+
+		//clear
+
+		obj.Clear();
+		apEnumAccess[i]->Release();
+		apEnumAccess[i] = NULL;
 	}
+
+
+	if (NULL != apEnumAccess)
+	{
+		delete[] apEnumAccess;
+		apEnumAccess = NULL;
+	}
+	// Sleep for a second.
+
+
+	
 }

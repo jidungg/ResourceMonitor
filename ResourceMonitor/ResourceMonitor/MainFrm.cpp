@@ -21,6 +21,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
+	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -99,3 +100,16 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 // CMainFrame 메시지 처리기
 
+
+
+void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nID == SC_CLOSE)
+	{
+		CDocument* doc =  GetActiveDocument();
+
+	}
+	CFrameWnd::OnSysCommand(nID, lParam);
+
+}

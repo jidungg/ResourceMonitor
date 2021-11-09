@@ -30,7 +30,7 @@ public:
 	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
 	virtual void GetData();
 
-	static void StartRefreshThread(CPerfData* perfData);
+	
 
 	//map<ULONG, DataObj>		*table;
 	IWbemObjectAccess       **apEnumAccess = NULL;

@@ -44,15 +44,12 @@ CPerfDataManager::~CPerfDataManager()
 	//delete m_win32OperatingSystem;
 }
 
-void CPerfDataManager::StartThread()
+void CPerfDataManager::RefreshData()
 {
 	//thread t2(CPerfData::StartRefreshThread, m_win32DiskDrive);
 	//t2.detach();
-
-	thread t1(CPerfData::StartRefreshThread, m_win32PerfFormatProc);
-	t1.detach();
-	thread t3(CPerfData::StartRefreshThread, m_win32OperatingSystem);
-	t3.detach();
+	m_win32PerfFormatProc->GetData();
+	m_win32OperatingSystem->GetData();
 }
 
 

@@ -20,11 +20,12 @@ protected: // serialization에서만 만들어집니다.
 // 특성입니다.
 public:
 	CPerfDataManager* m_perfDataManager;
-
+	CWinThread* m_updaterThread;
+	CWinThread* m_loggerThread;
 // 작업입니다.
 public:
-	static void UpdateViews(CResourceMonitorDoc *doc);
-	static void AddPeriodicLog(CResourceMonitorDoc *doc);
+	static UINT Update(LPVOID);
+	static UINT AddPeriodicLog(LPVOID doc);
 	void AtExitProcess(std::vector<ULONGLONG>* exitedProcIDs);
 // 재정의입니다.
 public:
