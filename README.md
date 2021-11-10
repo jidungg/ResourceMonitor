@@ -47,7 +47,11 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
 ## Usage
 단순히 exe파일을 실행시키면 된다. 추후 사용자 메뉴를 통한 여러 기능 추가 예정.   
 실행화면  
+<<<<<<< HEAD
 ![실행화면](./img/v1.0.1.PNG)
+=======
+![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.0.1.PNG?raw=true)
+>>>>>>> cdd365eb77b594be59923e18e684ddc631620ca1
 * * *  
 2021-11-08 v0.0.1 (제목목록.목록.내용)
 
