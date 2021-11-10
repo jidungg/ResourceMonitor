@@ -15,7 +15,6 @@ class CResourceMonitorView :public CScrollView
 {
 	//DECLARE_DYNCREATE(CResourceMonitorView)
 protected:
-
 	// serialization에서만 만들어집니다.
 	CResourceMonitorView();
 	virtual ~CResourceMonitorView();
@@ -23,19 +22,21 @@ protected:
 	// 특성입니다.
 public:
 	bool m_bInit = false;
+	int colCount;
 
 	CString m_title;
 	std::vector<CString> m_frameProps; //frame에 사용할 WMI의 속성 이름
 	std::vector<CString> m_tableProps; //table에 사용할 WMI의 속성 이름
 	std::vector<CString> m_frameCaptions;  //화면에 표시될 frame 속성 이름
 	std::vector<CString> m_tableCaptions;  //화면에 표시될 table 속성 이름
-	int colCount;
+
 	CListCtrl m_processList;
 	CListCtrl m_farmeList;
-	std::mutex m;
+
 
 	// 1.
 	BOOL m_bAscending;
+
 	struct SORTPARAM
 	{
 		int iSortColumn;

@@ -28,6 +28,7 @@ using namespace std;
 IMPLEMENT_DYNCREATE(CResourceMonitorDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CResourceMonitorDoc, CDocument)
+
 END_MESSAGE_MAP()
 
 
@@ -37,7 +38,7 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 	m_perfDataManager = new CPerfDataManager(this);
-
+	LogInterval = LOG_INTERVAL;
 }
 
 CResourceMonitorDoc::~CResourceMonitorDoc()
@@ -275,6 +276,9 @@ void AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...)
 		break;
 	case m_Logger.LOG_NETWORK:
 		str = "PerfData_Network";
+		break;
+	case m_Logger.LOG_PROCESS:
+		str = "PerfData_Process";
 		break;
 	}
 	if (m_Logger.IsCreate(nflag) != TRUE)

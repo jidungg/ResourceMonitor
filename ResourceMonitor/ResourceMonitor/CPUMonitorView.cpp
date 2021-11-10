@@ -118,17 +118,21 @@ void CCPUMonitorView::AddPeriodicLog()
 	int tableItemCount = m_processList.GetItemCount();
 	for (int j = 0; j < tableItemCount; j++)
 	{
-		//if (j >= LOG_TOP_N)
-		//{
-		//	break;
-		//}
-		str = _T("");
-		for (int i = 0; i< tableColCount; ++i)
+		float useRate = _wtof(m_processList.GetItemText(j, 2));
+
+		if (useRate >= LOG_CPU_THRESHOLD)
 		{
-			str += m_tableCaptions[tableColCount-i-1] + _T(": ");
-			str += m_processList.GetItemText(j, i) + _T(", ");
+			str = _T("");
+			for (int i = 0; i < tableColCount; ++i)
+			{
+
+				str += m_tableCaptions[tableColCount - i - 1] + _T(": ");
+				str += m_processList.GetItemText(j, i) + _T(", ");
+			}
+			AddLog(CLogger::LOG_CPU, str);
+			str.Empty();
 		}
-		AddLog(CLogger::LOG_CPU, str);
+
 	}
 
 }

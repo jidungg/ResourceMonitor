@@ -269,8 +269,7 @@ ipch/
 
 # image files
 *.ico
-*.bmp
-
+*.rc
 
 *.res
 *.lastbuildstate
@@ -286,3 +285,4 @@ ipch/
 *.filters
 *.bak
 *.zip
+*.vcxproj

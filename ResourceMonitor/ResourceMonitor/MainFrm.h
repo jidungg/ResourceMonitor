@@ -15,7 +15,7 @@ protected: // serialization에서만 만들어집니다.
 // 특성입니다.
 protected:
 	CSplitterWnd m_wndSplitter;
-
+	
 public:
 
 // 작업입니다.
@@ -45,6 +45,7 @@ protected:
 
 public:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+	afx_msg void OnSetLogInterval();
 };
 
 

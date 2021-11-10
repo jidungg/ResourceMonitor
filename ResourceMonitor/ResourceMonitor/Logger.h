@@ -22,9 +22,10 @@ public:
 		LOG_MEMORY,
 		LOG_DISK,
 		LOG_NETWORK,
+		LOG_PROCESS
 	};
-	BOOL m_bCreateFileFlag[LOG_NETWORK];
-	CString m_strLogFileName[LOG_NETWORK];
+	BOOL m_bCreateFileFlag[LOG_PROCESS];
+	CString m_strLogFileName[LOG_PROCESS];
 
 protected:
 	virtual CString MakeFullPath(CString strPath, CString strFileName, SYSTEMTIME sysTime, int nflag);
