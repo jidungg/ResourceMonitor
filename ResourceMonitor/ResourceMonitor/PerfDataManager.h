@@ -10,12 +10,14 @@ public:
 	~CPerfDataManager();
 
 	void RefreshData();
+	void Cleanup();
 
 	CPerfDataPerProcess* m_win32PerfFormatProc;
 	CPerfData* m_win32DiskDrive;
 	CPerfDataOS* m_win32OperatingSystem;
 
 	CResourceMonitorDoc* m_pDoc;
+
 
 	//void UpdateData();
 	//void UpdatePerfProcData(DataObj& data);

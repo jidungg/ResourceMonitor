@@ -78,18 +78,21 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 		info.psz = id;
 
 
-		if ((nIndex = m_tableList.FindItem(&info)) == -1)
+		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
-			m_tableList.InsertItem(0, id);
+			m_processList.InsertItem(0, id);
 
-			m_tableList.SetItemText(0, 1, name);
-			m_tableList.SetItemText(0, 2, percent);
+			m_processList.SetItemText(0, 1, name);
+			m_processList.SetItemText(0, 2, percent);
 		}
 		else
 		{
-			m_tableList.SetItemText(nIndex, 1, name);
-			m_tableList.SetItemText(nIndex, 2, percent);
+			m_processList.SetItemText(nIndex, 1, name);
+			m_processList.SetItemText(nIndex, 2, percent);
 		}
+		id.Empty();
+		name.Empty();
+		percent.Empty();
 
 	}
 
@@ -110,10 +113,10 @@ void CCPUMonitorView::AddPeriodicLog()
 	}
 	AddLog(CLogger::LOG_CPU, str);
 
-	pHeaderCtrl = m_tableList.GetHeaderCtrl();
+	pHeaderCtrl = m_processList.GetHeaderCtrl();
 	int tableColCount = pHeaderCtrl->GetItemCount();
-	int tableItemCount = m_tableList.GetItemCount();
-	for (size_t j = 0; j < tableItemCount; j++)
+	int tableItemCount = m_processList.GetItemCount();
+	for (int j = 0; j < tableItemCount; j++)
 	{
 		//if (j >= LOG_TOP_N)
 		//{
@@ -123,7 +126,7 @@ void CCPUMonitorView::AddPeriodicLog()
 		for (int i = 0; i< tableColCount; ++i)
 		{
 			str += m_tableCaptions[tableColCount-i-1] + _T(": ");
-			str += m_tableList.GetItemText(j, i) + _T(", ");
+			str += m_processList.GetItemText(j, i) + _T(", ");
 		}
 		AddLog(CLogger::LOG_CPU, str);
 	}

@@ -12,84 +12,102 @@ CPerfDataPerProcess::CPerfDataPerProcess()
 
 CPerfDataPerProcess::~CPerfDataPerProcess()
 {
-
 }
 
 void CPerfDataPerProcess::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
 {
 	m_table = new map<ULONGLONG, PerProcessDataObj>;
+	dataObj = new PerProcessDataObj;
 	CPerfData::Init(info, doc);
 }
 
-void CPerfDataPerProcess::GetData()
+//void CPerfDataPerProcess::GetData()
+//{
+//	dataObj.flag = true;
+//	CPerfData::Refresh();
+//
+//	for (unsigned int i = 0; i < dwNumReturned; i++)
+//	{
+//		for (size_t j = 0; j < m_nProps; ++j)
+//		{
+//
+//			if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal,0, 0)))
+//			{
+//				Cleanup();
+//				break;
+//			}
+//			
+//			VariantClear(&propertyVal);
+//
+//		}
+//		
+//
+//
+//		//clear obj & apEnumAccess
+//		dataObj.Clear();
+//		apEnumAccess[i]->Release();
+//		apEnumAccess[i] = nullptr;
+//	}
+//
+//
+//	if (nullptr != apEnumAccess)
+//	{
+//		delete[] apEnumAccess;
+//		apEnumAccess = nullptr;
+//	}
+//
+//	// clear exitedProcIDs
+//
+//
+//}
+void CPerfDataPerProcess::SetDataObj(int index)
 {
-	PerProcessDataObj obj;
-	obj.flag = true;
-	ULONGLONG ID;
-	VARIANT propertyVal;
-
-	CPerfData::Refresh();
-
-	for (int i = 0; i < dwNumReturned; i++)
+	PerProcessDataObj* procDataObj = (PerProcessDataObj*)dataObj;
+	switch (index)
 	{
-		for (size_t j = 0; j < m_nProps; ++j)
-		{
-
-			if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal,0, 0)))
-			{
-				Cleanup();
-				break;
-			}
-			switch (j)
-			{
-			case PROCESS_ID_INDEX:
-				ID = propertyVal.ullVal;
-				break;
-			case PROCESS_NAME_INDEX:
-				obj.name = propertyVal.bstrVal ;
-				break;
-			case PROCESS_WORKINGSET_INDEX:
-				obj.workingSet = propertyVal.bstrVal;
-				break;
-			case PROCESS_USEAGERATE_INDEX:
-				obj.usageRate = propertyVal.bstrVal;
-				break;
-			case PROCESS_IOREAD_INDEX:
-				obj.ioRead = propertyVal.bstrVal;
-				break;
-			case PROCESS_IOWRITE_INDEX:
-				obj.ioWrite = propertyVal.bstrVal;
-				break;
-			default:
-				break;
-			}
-			VariantClear(&propertyVal);
-
-		}
-		//(*table)[propertyVal[m_idIndex].bstrVal] = obj;
-		//(table->empty()) && 
-		usingPercent = _wtoi64(obj.usageRate);
-		if ((obj.name.Compare(_T("Idle")) == 0))
-		{
-			idlePercent = _wtoi64(obj.usageRate);
-		}
-		if (obj.name.Compare(_T("_Total")) == 0)
-		{
-			usingPercent = _wtoi64(obj.usageRate) - idlePercent;
-		}
-		usingPercent = usingPercent / nCores;
-		//SysFreeString(obj.usageRate);
-		obj.usageRate.Format(_T("%.02f"), usingPercent) ;
-
-		(*m_table)[ID] = obj;
-
-
-		//clear
-		obj.Clear();
-		apEnumAccess[i]->Release();
-		apEnumAccess[i] = NULL;
+	case PROCESS_ID_INDEX:
+		ID = propertyVal.ullVal;
+		break;
+	case PROCESS_NAME_INDEX:
+		procDataObj->name = propertyVal.bstrVal;
+		break;
+	case PROCESS_WORKINGSET_INDEX:
+		procDataObj->workingSet = propertyVal.bstrVal;
+		break;
+	case PROCESS_USEAGERATE_INDEX:
+		procDataObj->usageRate = propertyVal.bstrVal;
+		break;
+	case PROCESS_IOREAD_INDEX:
+		procDataObj->ioRead = propertyVal.bstrVal;
+		break;
+	case PROCESS_IOWRITE_INDEX:
+		procDataObj->ioWrite = propertyVal.bstrVal;
+		break;
+	default:
+		break;
 	}
+}
+void CPerfDataPerProcess::SetTableInstance()
+{
+	PerProcessDataObj* procDataObj = (PerProcessDataObj*)dataObj;
+	//calc usingPercent
+	usingPercent = _wtoi64(procDataObj->usageRate);
+	if ((procDataObj->name.Compare(_T("Idle")) == 0))
+	{
+		idlePercent = _wtoi64(procDataObj->usageRate);
+	}
+	if (procDataObj->name.Compare(_T("_Total")) == 0)
+	{
+		usingPercent = abs(_wtoi64(procDataObj->usageRate) - idlePercent);
+	}
+	usingPercent = (usingPercent / nCores);
+	procDataObj->usageRate.Format(_T("%.02f"), usingPercent);
 
+	//update Table
+	(*m_table)[ID] = *procDataObj;
+}
+void CPerfDataPerProcess::ArrangeTable()
+{
 	//false를 찾고
 	for (auto iter = m_table->begin(); iter != m_table->end(); iter++)
 	{
@@ -110,22 +128,11 @@ void CPerfDataPerProcess::GetData()
 
 	//table에 다 false로 바꿔
 	for (auto iter = m_table->begin(); iter != m_table->end(); iter++)
-	{		
+	{
 		iter->second.flag = false;
 	}
-
-	if (NULL != apEnumAccess)
-	{
-		delete[] apEnumAccess;
-		apEnumAccess = NULL;
-	}
-
 	exitedProcIDs.clear();
 	vector<ULONGLONG>().swap(exitedProcIDs);
-	// Sleep for a second.
-
-	
-
 
 }
 int CPerfDataPerProcess::GetNumberOfCores()
@@ -157,6 +164,8 @@ int CPerfDataPerProcess::GetNumberOfCores()
 			numOfCores++;
 	}
 	delete[] pProcessorInformations;
+	pProcessorInformations = nullptr;
+
 	return numOfCores;
 }
 

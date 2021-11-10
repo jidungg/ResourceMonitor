@@ -18,8 +18,7 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 	//info.isUnique = false;
 	//m_win32DiskDrive = new CPerfData();
 	//m_win32DiskDrive->Init(info, m_pDoc);
-
-
+	
 	info.className = L"Win32_PerfFormattedData_PerfProc_Process";
 	info.propertyNames = vector<CString>{ L"IDProcess", L"Name" , L"WorkingSet", L"PercentProcessorTime", L"IOReadBytesPersec", L"IOWriteBytesPersec"};
 	info.idIndex = 0;
@@ -39,9 +38,14 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 
 CPerfDataManager::~CPerfDataManager()
 {
-	//delete m_win32DiskDrive;
-	//delete m_win32PerfFormatProc;
-	//delete m_win32OperatingSystem;
+	/*delete m_win32DiskDrive;
+	m_win32DiskDrive = nullptr;*/
+
+	delete m_win32PerfFormatProc;
+	m_win32PerfFormatProc = nullptr;
+
+	delete m_win32OperatingSystem;
+	m_win32OperatingSystem = nullptr;
 }
 
 void CPerfDataManager::RefreshData()

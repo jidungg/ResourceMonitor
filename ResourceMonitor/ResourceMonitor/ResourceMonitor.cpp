@@ -7,7 +7,6 @@
 #include "afxdialogex.h"
 #include "ResourceMonitor.h"
 #include "MainFrm.h"
-
 #include "ResourceMonitorDoc.h"
 #include "ResourceMonitorView.h"
 
@@ -43,11 +42,12 @@ CResourceMonitorApp::CResourceMonitorApp()
 
 	// TODO: 아래 응용 프로그램 ID 문자열을 고유 ID 문자열로 바꾸십시오(권장).
 	// 문자열에 대한 서식: CompanyName.ProductName.SubProduct.VersionInformation
-	SetAppID(_T("ResourceMonitor.AppID.NoVersion"));
+	SetAppID(_T("ResourceMonitor.test.0.01"));
 
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
 }
+
 
 // 유일한 CResourceMonitorApp 개체입니다.
 
@@ -90,7 +90,6 @@ BOOL CResourceMonitorApp::InitInstance()
 
 	// 응용 프로그램의 문서 템플릿을 등록합니다.  문서 템플릿은
 	//  문서, 프레임 창 및 뷰 사이의 연결 역할을 합니다.
-	CSingleDocTemplate* pDocTemplate;
 	pDocTemplate = new CSingleDocTemplate(
 		IDR_MAINFRAME,
 		RUNTIME_CLASS(CResourceMonitorDoc),
@@ -115,6 +114,8 @@ BOOL CResourceMonitorApp::InitInstance()
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+
 	return TRUE;
 
 }

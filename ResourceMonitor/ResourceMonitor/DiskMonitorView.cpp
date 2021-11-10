@@ -72,21 +72,24 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 		info.flags = LVFI_STRING;
 		info.psz = id;
 
-		if ((nIndex = m_tableList.FindItem(&info)) == -1)
+		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
-			m_tableList.InsertItem(0, id);
+			m_processList.InsertItem(0, id);
 
-			m_tableList.SetItemText(0, 1, name);
-			m_tableList.SetItemText(0, 2, ioRead);
-			m_tableList.SetItemText(0, 3, ioWrite);
+			m_processList.SetItemText(0, 1, name);
+			m_processList.SetItemText(0, 2, ioRead);
+			m_processList.SetItemText(0, 3, ioWrite);
 		}
 		else
 		{
-			m_tableList.SetItemText(nIndex, 1, name);
-			m_tableList.SetItemText(nIndex, 2, ioRead);
-			m_tableList.SetItemText(nIndex, 3, ioWrite);
+			m_processList.SetItemText(nIndex, 1, name);
+			m_processList.SetItemText(nIndex, 2, ioRead);
+			m_processList.SetItemText(nIndex, 3, ioWrite);
 		}
-
+		id.Empty();
+		name.Empty();
+		ioRead.Empty();
+		ioWrite.Empty();
 	}
 
 

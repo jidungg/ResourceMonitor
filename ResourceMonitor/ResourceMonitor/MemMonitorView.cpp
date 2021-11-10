@@ -74,18 +74,21 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 
 
-		if ((nIndex = m_tableList.FindItem(&info)) == -1)
+		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
-			m_tableList.InsertItem(0, id);
+			m_processList.InsertItem(0, id);
 
-			m_tableList.SetItemText(0, 1, name);
-			m_tableList.SetItemText(0, 2, workingSet);
+			m_processList.SetItemText(0, 1, name);
+			m_processList.SetItemText(0, 2, workingSet);
 		}
 		else
 		{
-			m_tableList.SetItemText(nIndex, 1, name);
-			m_tableList.SetItemText(nIndex, 2, workingSet);
+			m_processList.SetItemText(nIndex, 1, name);
+			m_processList.SetItemText(nIndex, 2, workingSet);
 		}
+		id.Empty();
+		name.Empty();
+		workingSet.Empty();
 
 	}
 
@@ -110,6 +113,8 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 			m_farmeList.SetItemText(0, 1, total);
 			m_farmeList.SetItemText(0, 2, nowUsing);
 		}
+		total.Empty();
+		nowUsing.Empty();
 	}
 
 }
@@ -129,11 +134,12 @@ void CMemMonitorView::AddPeriodicLog()
 		str += m_farmeList.GetItemText(0, i+1) + _T(", ");
 	}
 	AddLog(CLogger::LOG_MEMORY, str);
+	str.Empty();
 
-	pHeaderCtrl = m_tableList.GetHeaderCtrl();
+	pHeaderCtrl = m_processList.GetHeaderCtrl();
 	int tableColCount = pHeaderCtrl->GetItemCount();
-	int tableItemCount = m_tableList.GetItemCount();
-	for (size_t j = 0; j < tableItemCount; j++)
+	int tableItemCount = m_processList.GetItemCount();
+	for (int j = 0; j < tableItemCount; j++)
 	{
 		//if (j >= LOG_TOP_N)
 		//{
@@ -143,9 +149,10 @@ void CMemMonitorView::AddPeriodicLog()
 		for (int i = 0; i< tableColCount; ++i)
 		{
 			str += m_tableCaptions[tableColCount - i -1 ] + _T(": ");
-			str += m_tableList.GetItemText(j, i) + _T(", ");
+			str += m_processList.GetItemText(j, i) + _T(", ");
 		}
 		AddLog(CLogger::LOG_MEMORY, str);
+		str.Empty();
 	}
 }
 //void CMemMonitorView::OnDraw(CDC* pDC)

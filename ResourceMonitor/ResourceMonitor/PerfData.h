@@ -28,23 +28,28 @@ public:
 	~CPerfData();
 
 	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
-	virtual void GetData();
-
-	
+	void GetData();
+	void Cleanup();
+	void CleanUpOnce();
 
 	//map<ULONG, DataObj>		*table;
 	IWbemObjectAccess       **apEnumAccess = NULL;
 
 	DWORD                   dwNumReturned = 0;
+	DataObj					*dataObj;
 
 
 protected:
 	void Refresh();
-	void Cleanup();
+
+
+	virtual void SetDataObj(int index) abstract;
+	virtual void SetTableInstance() abstract;
+	virtual void ArrangeTable()abstract;
 
 	void AddEnumerator(LPCTSTR class_name);
 
-	int						m_nProps;
+	size_t					m_nProps;
 	int						m_idIndex;
 	long                    lID = 0;
 	bool					isUnique;
@@ -54,16 +59,21 @@ protected:
 	IWbemRefresher			*pRefresher = NULL;
 	IWbemConfigureRefresher *pConfig = NULL;
 	IWbemHiPerfEnum			*pEnum = NULL;
-	IWbemServices           *pNameSpace = NULL;
 	IWbemLocator            *pWbemLocator = NULL;
+	BSTR                    bstrNameSpace = NULL;
+	IWbemServices           *pNameSpace = NULL;
+
 	CResourceMonitorDoc		*m_pDoc;
 
-	BSTR                    bstrNameSpace = NULL;
+
 
 	CString					className;
 	vector<CString>			propertyNames;
 
-	mutex					m;
+
+	VARIANT propertyVal;
+	ULONGLONG ID;
+
 private :
 
 

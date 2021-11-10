@@ -12,7 +12,9 @@
 #include "ResourceMonitorView.h"
 #include "PerfData.h"
 #include <vector>
+
 using namespace std;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -38,13 +40,13 @@ void CResourceMonitorView::InitTable()
 {
 	CRect rect;
 	GetClientRect(&rect);
-	m_tableList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, FRAME_WIDTH, rect.Width(), rect.Height()), this, 100);
-	m_tableList.SetColumnWidth(colCount, LVSCW_AUTOSIZE_USEHEADER);
-	m_tableList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER);
+	m_processList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, FRAME_WIDTH, rect.Width(), rect.Height()), this, 100);
+	m_processList.SetColumnWidth(colCount, LVSCW_AUTOSIZE_USEHEADER);
+	m_processList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER);
 
 	for (auto iter = m_tableCaptions.begin() ; iter != m_tableCaptions.end(); iter++)
 	{
-		m_tableList.InsertColumn(0, *iter, LVCFMT_LEFT, 150, 0);
+		m_processList.InsertColumn(0, *iter, LVCFMT_LEFT, 150, 0);
 	}
 
 }
@@ -78,10 +80,11 @@ void CResourceMonitorView::RemoveProcessFromList(vector<ULONGLONG>* exitedProcID
 		str.Format(_T("%llu"), *iter);
 		info.psz = str;
 
-		if ((nIndex = m_tableList.FindItem(&info)) != -1)
+		if ((nIndex = m_processList.FindItem(&info)) != -1)
 		{
-			m_tableList.DeleteItem(nIndex);
+			m_processList.DeleteItem(nIndex);
 		}
+		str.Empty();
 	}
 
 
@@ -96,8 +99,8 @@ void CResourceMonitorView::OnHdnItemclickList1(NMHDR * pNMHDR, LRESULT * pResult
 	int nColumn = pNMLV->iItem;
 
 	// 현 리스트 컨트롤에 있는 데이터 총 자료 개수만큼 저장
-	for (int i = 0; i < (m_tableList.GetItemCount()); i++) {
-		m_tableList.SetItemData(i, i);
+	for (int i = 0; i < (m_processList.GetItemCount()); i++) {
+		m_processList.SetItemData(i, i);
 	}
 
 	// 정렬 방식 저장
@@ -105,7 +108,7 @@ void CResourceMonitorView::OnHdnItemclickList1(NMHDR * pNMHDR, LRESULT * pResult
 
 	// 정렬 관련 구조체 변수 생성 및 데이터 초기화
 	SORTPARAM sortparams;
-	sortparams.pList = &m_tableList;
+	sortparams.pList = &m_processList;
 	sortparams.iSortColumn = nColumn;
 	sortparams.bSortDirect = m_bAscending;
 	
@@ -125,7 +128,7 @@ void CResourceMonitorView::OnHdnItemclickList1(NMHDR * pNMHDR, LRESULT * pResult
 		sortparams.flag = 2;
 
 	// 정렬 함수 호출
-	m_tableList.SortItems(&CompareItem, (LPARAM)&sortparams);
+	m_processList.SortItems(&CompareItem, (LPARAM)&sortparams);
 	*pResult = 0;
 }
 
@@ -168,7 +171,7 @@ int CResourceMonitorView::CompareItem(LPARAM lParam1, LPARAM lParam2, LPARAM lPa
 		return	bSortDirect ? strcmp(LPSTR(LPCTSTR(strItem1)), LPSTR(LPCTSTR(strItem2))) : -strcmp(LPSTR(LPCTSTR(strItem1)), LPSTR(LPCTSTR(strItem2)));
 	}
 	// RATE 정렬
-	else if (flag == 2)
+	else
 	{
 		double dItem1 = _wtof(strItem1);
 		double dItem2 = _wtof(strItem2);
@@ -283,7 +286,7 @@ void CResourceMonitorView::OnSize(UINT nType, int cx, int cy)
 	CScrollView::OnSize(nType, cx, cy);
 	if (!m_bInit)
 		return;
-	m_tableList.MoveWindow(0, FRAME_WIDTH, cx, cy-FRAME_WIDTH,TRUE);
+	m_processList.MoveWindow(0, FRAME_WIDTH, cx, cy-FRAME_WIDTH,TRUE);
 	m_farmeList.MoveWindow(0, 0, cx, FRAME_WIDTH, TRUE);
 	m_farmeList.ShowScrollBar(SB_BOTH, FALSE);
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
