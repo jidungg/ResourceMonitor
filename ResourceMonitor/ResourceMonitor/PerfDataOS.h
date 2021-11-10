@@ -22,9 +22,16 @@ public:
 	CPerfDataOS();
 	~CPerfDataOS();
 
+	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
+
+	virtual void SetDataObj(int index);
+	virtual void SetTableInstance();
+	virtual void ArrangeTable();
+public:
 	map<ULONGLONG, OSDataObj>	*m_table;
 
-	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
-	virtual void GetData();
+	OSDataObj dataObjOS;
+
+
 };
 

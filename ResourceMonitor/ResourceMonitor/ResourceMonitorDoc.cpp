@@ -42,7 +42,8 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 
 CResourceMonitorDoc::~CResourceMonitorDoc()
 {
-	//delete m_perfDataManager;
+	delete m_perfDataManager;
+	m_perfDataManager = nullptr;
 }
 
 UINT CResourceMonitorDoc::Update(LPVOID doc)
@@ -57,7 +58,15 @@ UINT CResourceMonitorDoc::Update(LPVOID doc)
 
 	while (true)
 	{
-		dataManager->RefreshData();
+		if (pDoc->m_isExit == TRUE)
+		{
+			break;
+		}
+		{
+			dataManager->RefreshData();
+
+		}
+
 
 		pView1->UpdateView(dataManager);
 		pView2->UpdateView(dataManager);
@@ -66,7 +75,8 @@ UINT CResourceMonitorDoc::Update(LPVOID doc)
 
 		Sleep(UPDATE_INTERVAL);
 	}
-	return 0;
+	TRACE("Update Func Out!!\n");
+	return EXIT_CODE;
 }
 
 
@@ -81,14 +91,18 @@ UINT CResourceMonitorDoc::AddPeriodicLog(LPVOID doc)
 	CResourceMonitorView* pView4 = (CResourceMonitorView*)pDoc->GetNextView(pos);
 	while (true)
 	{
-
+		if (pDoc->m_isExit == TRUE)
+		{
+			break;
+		}
 		pView1->AddPeriodicLog();
 		pView2->AddPeriodicLog();
 		pView3->AddPeriodicLog();
 		pView4->AddPeriodicLog();
 		Sleep(LOG_INTERVAL);
 	}
-	return 0;
+	TRACE("AddPeriodicLog Func Out!!\n");
+	return EXIT_CODE;
 }
 
 void CResourceMonitorDoc::AtExitProcess(vector<ULONGLONG>* exitedProcIDs)
@@ -106,14 +120,50 @@ void CResourceMonitorDoc::AtExitProcess(vector<ULONGLONG>* exitedProcIDs)
 	pView4->RemoveProcessFromList(exitedProcIDs);
 }
 
+void CResourceMonitorDoc::ExitThread()
+{
+	DWORD dwRetCode = WaitForSingleObject(m_updaterThread->m_hThread, INFINITE);
+	if (dwRetCode == WAIT_OBJECT_0)
+	{
+		TRACE("m_updaterThread is terminated normally!\n");
+	}
+	else if (dwRetCode == WAIT_TIMEOUT) {
+		::TerminateThread(m_updaterThread->m_hThread, 0);
+		TRACE("m_updaterThread is terminated FORCELY!");
+	}
+
+	delete m_updaterThread;
+	m_updaterThread = nullptr;
+
+	dwRetCode = WaitForSingleObject(m_loggerThread->m_hThread, LOG_INTERVAL);
+	if (dwRetCode == WAIT_OBJECT_0)
+	{
+		TRACE("m_loggerThread is terminated normally!\n");
+	}
+	else if (dwRetCode == WAIT_TIMEOUT) {
+		::TerminateThread(m_loggerThread->m_hThread, 0);
+		TRACE("m_loggerThread is terminated FORCELY!");
+	}
+
+	delete m_loggerThread;
+	m_loggerThread = nullptr;
+}
+
 BOOL CResourceMonitorDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 	m_perfDataManager->m_pDoc = this;
 
-	m_updaterThread = AfxBeginThread(Update, this);
-	m_loggerThread = AfxBeginThread(AddPeriodicLog, this);
+
+	 //thread 생성
+	m_updaterThread = AfxBeginThread(Update, this, 0, 0, CREATE_SUSPENDED, 0);
+	m_updaterThread->m_bAutoDelete = FALSE;
+	m_updaterThread->ResumeThread();
+
+	m_loggerThread = AfxBeginThread(AddPeriodicLog, this, 0, 0, CREATE_SUSPENDED, 0);
+	m_loggerThread->m_bAutoDelete = FALSE;
+	m_loggerThread->ResumeThread();
 
 	// TODO: 여기에 재초기화 코드를 추가합니다.
 	// SDI 문서는 이 문서를 다시 사용합니다.

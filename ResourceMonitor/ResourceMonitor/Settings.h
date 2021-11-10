@@ -1,5 +1,5 @@
 #pragma once
-#define VERSION "v1.0.1"
+#define VERSION "v1.0.2"
 #define FRAME_WIDTH 60
 #define UPDATE_INTERVAL 1000
 #define LOG_INTERVAL 10000

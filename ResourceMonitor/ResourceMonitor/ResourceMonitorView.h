@@ -30,7 +30,7 @@ public:
 	std::vector<CString> m_frameCaptions;  //화면에 표시될 frame 속성 이름
 	std::vector<CString> m_tableCaptions;  //화면에 표시될 table 속성 이름
 	int colCount;
-	CListCtrl m_tableList;
+	CListCtrl m_processList;
 	CListCtrl m_farmeList;
 	std::mutex m;
 

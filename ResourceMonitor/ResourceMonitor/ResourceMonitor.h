@@ -19,6 +19,8 @@ class CResourceMonitorApp : public CWinApp
 public:
 	CResourceMonitorApp();
 
+	CSingleDocTemplate* pDocTemplate;
+
 // 재정의입니다.
 public:
 	virtual BOOL InitInstance();

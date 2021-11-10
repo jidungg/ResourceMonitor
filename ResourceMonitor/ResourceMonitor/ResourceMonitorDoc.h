@@ -7,6 +7,9 @@
 #include "Logger.h"
 #include "Logger_Base.h"
 #include <vector>
+#include <thread>
+
+using namespace std;
 
 class CPerfDataManager;
 static CLogger m_Logger;
@@ -22,11 +25,13 @@ public:
 	CPerfDataManager* m_perfDataManager;
 	CWinThread* m_updaterThread;
 	CWinThread* m_loggerThread;
+	BOOL m_isExit = FALSE;
 // 작업입니다.
 public:
 	static UINT Update(LPVOID);
 	static UINT AddPeriodicLog(LPVOID doc);
 	void AtExitProcess(std::vector<ULONGLONG>* exitedProcIDs);
+	void ExitThread();
 // 재정의입니다.
 public:
 	virtual BOOL OnNewDocument();
