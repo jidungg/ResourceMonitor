@@ -41,7 +41,7 @@ void CResourceMonitorView::InitTable()
 	CRect rect;
 	GetClientRect(&rect);
 	m_processList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, FRAME_WIDTH, rect.Width(), rect.Height()), this, 100);
-	m_processList.SetColumnWidth(colCount, LVSCW_AUTOSIZE_USEHEADER);
+	m_processList.SetColumnWidth(m_tableCaptions.size(), LVSCW_AUTOSIZE_USEHEADER);
 	m_processList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER);
 
 	for (auto iter = m_tableCaptions.begin() ; iter != m_tableCaptions.end(); iter++)

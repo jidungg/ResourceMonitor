@@ -100,7 +100,9 @@ CString CLogger::MakeFullPath(CString strPath, CString strFileName, SYSTEMTIME s
 	case LOG_NETWORK:
 		strFullPath = strFullPath + _T("\\Network");
 		break;
-
+	case LOG_PROCESS :
+		strFullPath = strFullPath + _T("\\Process");
+		break;
 	}
 	if (!IsExistFolder(strFullPath) ) ::CreateDirectory(strFullPath, NULL);
 

@@ -26,6 +26,7 @@ public:
 	CWinThread* m_updaterThread;
 	CWinThread* m_loggerThread;
 	BOOL m_isExit = FALSE;
+	static int LogInterval;
 // 작업입니다.
 public:
 	static UINT Update(LPVOID);
@@ -59,6 +60,8 @@ protected:
 	// 검색 처리기에 대한 검색 콘텐츠를 설정하는 도우미 함수
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+
 };
 
 void AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...);

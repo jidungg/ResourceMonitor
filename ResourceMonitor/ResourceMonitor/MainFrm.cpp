@@ -12,6 +12,7 @@
 #include "MainFrm.h"
 #include "ResourceMonitorDoc.h"
 #include "PerfDataManager.h"
+#include "CDlgSetLogInterval.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,6 +25,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SYSCOMMAND()
+	ON_COMMAND(ID_SET_LOG_INTERVAL, &CMainFrame::OnSetLogInterval)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -51,6 +53,30 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	//CMenu menuMain;
+	//menuMain.CreateMenu();
+	//CMenu menuPopup;
+	//menuPopup.CreatePopupMenu();
+
+	//CMenu menuSubPopup;
+	//menuSubPopup.CreatePopupMenu();
+
+	//// Item 팝업메뉴의 하위메뉴 입니다.
+	//menuSubPopup.AppendMenu(MF_STRING, 1001, _T("SubItem2-1"));
+
+	//// Test 최상위 메뉴의 팝업메뉴 입니다.
+	//	// 하위 메뉴가 있을 땐 MF_POPUP을 인자로 넘겨주셔야 합니다.
+	//menuPopup.AppendMenu(MF_STRING, 1101, _T("Item1"));
+	//menuPopup.AppendMenu(MF_POPUP, (UINT)menuSubPopup.Detach(), _T("Item2"));
+	//menuPopup.AppendMenu(MF_STRING, 1102, _T("Item3"));
+
+	//// 최상위 메뉴 입니다.
+	//menuMain.AppendMenu(MF_POPUP, (UINT)menuPopup.Detach(), _T("Test"));
+
+	//// 윈도우에 메뉴를 추가합니다.
+	//SetMenu(&menuMain);
+	//// 메뉴 객체와 메뉴를 분리합니다.
+	//menuMain.Detach();
 
 	return 0;
 }
@@ -74,13 +100,17 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
-	if (cs.hMenu != NULL)
-	{
-		::DestroyMenu(cs.hMenu);
-		cs.hMenu = NULL;
-	}
+	//if (cs.hMenu != NULL)
+	//{
+	//	::DestroyMenu(cs.hMenu);
+	//	cs.hMenu = NULL;
 
+	//}
+	//CMenu* pMenu = GetMenu();
 
+	//pMenu->DeleteMenu(1, MF_BYPOSITION);
+
+	//DrawMenuBar();
 	return TRUE;
 }
 
@@ -146,4 +176,17 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 
 
+}
+
+
+void CMainFrame::OnSetLogInterval()
+{
+	//CDlgSetLogInterval *pDlg = new CDlgSetLogInterval;
+	//pDlg->Create(IDD_SET_LOG_INTERVAL);
+	//pDlg->ShowWindow(SW_SHOW);
+	CDlgSetLogInterval dlg;
+	dlg.DoModal();
+
+	return ;
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 }
