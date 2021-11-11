@@ -10,11 +10,6 @@
 #include "ResourceMonitorView.h"
 #include <vector>
 #include <map>
-
-//#ifdef _DEBUG
-//#define new DEBUG_NEW
-//#endif
-
 #pragma comment(lib, "wbemuuid.lib")
 
 using namespace std;
@@ -30,7 +25,6 @@ CPerfData::~CPerfData()
 
 void CPerfData::Init(const PerfDataInfo& info, CResourceMonitorDoc* doc)
 {
-
 	className = info.className;
 	propertyNames = info.propertyNames;
 	m_nProps = info.propertyNames.size();
@@ -136,8 +130,6 @@ void CPerfData::AddEnumerator(LPCTSTR class_name)
 	pConfig = NULL;
 }
 
-
-
 void CPerfData::Refresh()
 {
 	dwNumReturned = 0;
@@ -147,7 +139,7 @@ void CPerfData::Refresh()
 	{
 		Cleanup();
 	}
-	
+
 
 	hr = pEnum->GetObjects(0L,
 		dwNumObjects,
@@ -184,10 +176,7 @@ void CPerfData::Refresh()
 			Cleanup();
 		}
 	}
-	
 }
-
-
 
 void CPerfData::GetData()
 {
@@ -274,5 +263,3 @@ void CPerfData::CleanUpOnce()
 	}
 	CoUninitialize();
 }
-
-

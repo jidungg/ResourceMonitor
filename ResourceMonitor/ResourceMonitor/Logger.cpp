@@ -115,6 +115,46 @@ CString CLogger::MakeFullPath(CString strPath, CString strFileName, SYSTEMTIME s
 	return(strFullPath);
 }
 
+void CLogger::AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...)
+{
+
+	CString str;
+	switch (nflag)
+	{
+	case LOG_CPU:
+		str = "PerfData_CPU";
+		break;
+	case LOG_MEMORY:
+		str = "PerfData_Memory";
+		break;
+	case LOG_DISK:
+		str = "PerfData_Disk";
+		break;
+	case LOG_NETWORK:
+		str = "PerfData_Network";
+		break;
+	case LOG_PROCESS:
+		str = "PerfData_Process";
+		break;
+	}
+
+	if (IsCreate(nflag) != TRUE)
+	{
+		Create(nflag, LOG_DIRECTORY, str);
+	}
+
+	va_list args;
+	va_start(args, lpszFormat);
+
+	int nBuf;
+	TCHAR szBuffer[4096];
+
+	nBuf = _vsntprintf_s(szBuffer, _countof(szBuffer), lpszFormat, args);
+
+	va_end(args);
+
+	AppendLogData(nflag, szBuffer);
+}
 
 void CLogger::Create(int nflag, CString strDir, CString strFileName)
 {

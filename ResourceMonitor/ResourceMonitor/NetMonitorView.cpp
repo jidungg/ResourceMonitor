@@ -20,7 +20,6 @@ CNetMonitorView::CNetMonitorView()
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
 
-	colCount = 4;
 }
 
 CNetMonitorView::~CNetMonitorView()

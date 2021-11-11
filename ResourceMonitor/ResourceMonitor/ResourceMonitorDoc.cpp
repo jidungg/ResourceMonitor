@@ -128,7 +128,8 @@ void CResourceMonitorDoc::ExitThread()
 	{
 		TRACE("m_updaterThread is terminated normally!\n");
 	}
-	else if (dwRetCode == WAIT_TIMEOUT) {
+	else if (dwRetCode == WAIT_TIMEOUT)
+	{
 		::TerminateThread(m_updaterThread->m_hThread, 0);
 		TRACE("m_updaterThread is terminated FORCELY!");
 	}
@@ -141,7 +142,8 @@ void CResourceMonitorDoc::ExitThread()
 	{
 		TRACE("m_loggerThread is terminated normally!\n");
 	}
-	else if (dwRetCode == WAIT_TIMEOUT) {
+	else if (dwRetCode == WAIT_TIMEOUT)
+	{
 		::TerminateThread(m_loggerThread->m_hThread, 0);
 		TRACE("m_loggerThread is terminated FORCELY!");
 	}
@@ -256,47 +258,4 @@ void CResourceMonitorDoc::Dump(CDumpContext& dc) const
 	CDocument::Dump(dc);
 }
 #endif //_DEBUG
-
-
-
-void AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...)
-{
-	
-	CString str;
-	switch (nflag)
-	{
-	case m_Logger.LOG_CPU:
-		str = "PerfData_CPU";
-		break;
-	case m_Logger.LOG_MEMORY:
-		str = "PerfData_Memory";
-		break;
-	case m_Logger.LOG_DISK:
-		str = "PerfData_Disk";
-		break;
-	case m_Logger.LOG_NETWORK:
-		str = "PerfData_Network";
-		break;
-	case m_Logger.LOG_PROCESS:
-		str = "PerfData_Process";
-		break;
-	}
-	if (m_Logger.IsCreate(nflag) != TRUE)
-	{
-		m_Logger.Create(nflag, LOG_DIRECTORY, str);
-	}
-
-	va_list args;
-	va_start(args, lpszFormat);
-
-	int nBuf;
-	TCHAR szBuffer[4096];
-
-	nBuf = _vsntprintf_s(szBuffer, _countof(szBuffer), lpszFormat, args);
-
-	va_end(args);
-
-	m_Logger.AppendLogData(nflag, szBuffer);
-}
-
 

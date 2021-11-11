@@ -10,13 +10,6 @@ public:
 	CLogger();
 	virtual ~CLogger();
 
-
-	//Logger Add
-	void AppendLogData(int nflag, LPCTSTR szFmt, ...);
-	//void Create(CString strDir, CString strFileName);  // it's not have Destroy function.
-	void Create(int nflag, CString strDir, CString strFileName); 
-	BOOL IsCreate(int nflag);
-
 	enum LogDirectory{
 		LOG_CPU = 1,
 		LOG_MEMORY,
@@ -24,8 +17,16 @@ public:
 		LOG_NETWORK,
 		LOG_PROCESS
 	};
+
 	BOOL m_bCreateFileFlag[LOG_PROCESS];
 	CString m_strLogFileName[LOG_PROCESS];
+
+	//Logger Add
+	void AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...);
+	void AppendLogData(int nflag, LPCTSTR szFmt, ...);
+	//void Create(CString strDir, CString strFileName);  // it's not have Destroy function.
+	void Create(int nflag, CString strDir, CString strFileName); 
+	BOOL IsCreate(int nflag);
 
 protected:
 	virtual CString MakeFullPath(CString strPath, CString strFileName, SYSTEMTIME sysTime, int nflag);

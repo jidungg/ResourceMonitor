@@ -192,7 +192,8 @@ BOOL CLogger_Base::IsExistFolder(CString strPath)
 	HANDLE hFind;
     WIN32_FIND_DATA fd;
 
-    if ((hFind = ::FindFirstFile((LPCTSTR)strPath, &fd)) != INVALID_HANDLE_VALUE) {	
+    if ((hFind = ::FindFirstFile((LPCTSTR)strPath, &fd)) != INVALID_HANDLE_VALUE)
+	{	
 		::FindClose(hFind);	
 		return TRUE;
     }

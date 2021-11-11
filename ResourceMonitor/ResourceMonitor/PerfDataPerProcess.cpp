@@ -21,45 +21,6 @@ void CPerfDataPerProcess::Init(const PerfDataInfo & info, CResourceMonitorDoc * 
 	CPerfData::Init(info, doc);
 }
 
-//void CPerfDataPerProcess::GetData()
-//{
-//	dataObj.flag = true;
-//	CPerfData::Refresh();
-//
-//	for (unsigned int i = 0; i < dwNumReturned; i++)
-//	{
-//		for (size_t j = 0; j < m_nProps; ++j)
-//		{
-//
-//			if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal,0, 0)))
-//			{
-//				Cleanup();
-//				break;
-//			}
-//			
-//			VariantClear(&propertyVal);
-//
-//		}
-//		
-//
-//
-//		//clear obj & apEnumAccess
-//		dataObj.Clear();
-//		apEnumAccess[i]->Release();
-//		apEnumAccess[i] = nullptr;
-//	}
-//
-//
-//	if (nullptr != apEnumAccess)
-//	{
-//		delete[] apEnumAccess;
-//		apEnumAccess = nullptr;
-//	}
-//
-//	// clear exitedProcIDs
-//
-//
-//}
 void CPerfDataPerProcess::SetDataObj(int index)
 {
 	PerProcessDataObj* procDataObj = (PerProcessDataObj*)dataObj;
@@ -106,6 +67,7 @@ void CPerfDataPerProcess::SetTableInstance()
 	//update Table
 	(*m_table)[ID] = *procDataObj;
 }
+
 void CPerfDataPerProcess::ArrangeTable()
 {
 	//false¸¦ Ã£°í

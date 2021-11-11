@@ -23,7 +23,6 @@ CMemMonitorView::CMemMonitorView()
 	m_tableCaptions.push_back(_T("Usage(KB)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
-	colCount = 3;
 
 }
 
@@ -133,7 +132,7 @@ void CMemMonitorView::AddPeriodicLog()
 		str += m_frameCaptions[i] ;
 		str += m_farmeList.GetItemText(0, i+1) + _T(", ");
 	}
-	AddLog(CLogger::LOG_MEMORY, str);
+	sLogger.AddLog(CLogger::LOG_MEMORY, str);
 	str.Empty();
 
 	pHeaderCtrl = m_processList.GetHeaderCtrl();
@@ -150,7 +149,7 @@ void CMemMonitorView::AddPeriodicLog()
 				str += m_tableCaptions[tableColCount - i - 1] + _T(": ");
 				str += m_processList.GetItemText(j, i) + _T(", ");
 			}
-			AddLog(CLogger::LOG_MEMORY, str);
+			sLogger.AddLog(CLogger::LOG_MEMORY, str);
 			str.Empty();
 		}
 
