@@ -3,11 +3,11 @@
 #include <Wbemidl.h>
 #include <vector>
 #include <map>
-#include <mutex>
 
 using namespace std;
 
 class CResourceMonitorDoc;
+
 struct PerfDataInfo
 {
 	int idIndex = 0;
@@ -15,6 +15,7 @@ struct PerfDataInfo
 	vector<CString>	propertyNames;
 	bool isUnique = false;
 };
+
 struct DataObj
 {
 	bool flag = false;
@@ -27,28 +28,18 @@ public:
 	CPerfData();
 	~CPerfData();
 
-	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
+	DataObj					*dataObj;
+	DWORD                   dwNumReturned = 0;
+	IWbemObjectAccess       **apEnumAccess = NULL;
+	
 	void GetData();
 	void Cleanup();
 	void CleanUpOnce();
-
-	//map<ULONG, DataObj>		*table;
-	IWbemObjectAccess       **apEnumAccess = NULL;
-
-	DWORD                   dwNumReturned = 0;
-	DataObj					*dataObj;
-
-
+	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
+	
 protected:
-	void Refresh();
 
-
-	virtual void SetDataObj(int index) abstract;
-	virtual void SetTableInstance() abstract;
-	virtual void ArrangeTable()abstract;
-
-	void AddEnumerator(LPCTSTR class_name);
-
+	CResourceMonitorDoc		*m_pDoc;
 	size_t					m_nProps;
 	int						m_idIndex;
 	long                    lID = 0;
@@ -63,16 +54,18 @@ protected:
 	BSTR                    bstrNameSpace = NULL;
 	IWbemServices           *pNameSpace = NULL;
 
-	CResourceMonitorDoc		*m_pDoc;
-
-
 
 	CString					className;
 	vector<CString>			propertyNames;
 
+	VARIANT					propertyVal;
+	ULONGLONG				ID;
 
-	VARIANT propertyVal;
-	ULONGLONG ID;
+	virtual void SetDataObj(int index) abstract;
+	virtual void SetTableInstance() abstract;
+	virtual void ArrangeTable() abstract;
+	void Refresh();
+	void AddEnumerator(LPCTSTR class_name);
 
 private :
 

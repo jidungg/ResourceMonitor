@@ -18,43 +18,6 @@ void CPerfDataOS::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
 	CPerfData::Init(info, doc);
 }
 
-//void CPerfDataOS::GetData()
-//{
-//
-//	dataObj.flag = true;
-//
-//	CPerfData::Refresh();
-//	for (unsigned int i = 0; i < dwNumReturned; i++)
-//	{
-//		for (size_t j = 0; j < m_nProps; ++j)
-//		{
-//			if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal, 0, 0)))
-//			{
-//				Cleanup();
-//				break;
-//			}
-//
-//			VariantClear(&propertyVal);
-//		}
-//
-//
-//
-//		//clear
-//
-//		dataObj.Clear();
-//		apEnumAccess[i]->Release();
-//		apEnumAccess[i] = nullptr;
-//	}
-//
-//
-//	if (nullptr != apEnumAccess)
-//	{
-//		delete[] apEnumAccess;
-//		apEnumAccess = nullptr;
-//	}
-//
-//}
-
 void CPerfDataOS::SetDataObj(int index)
 {
 	OSDataObj* osDataObj = (OSDataObj*)dataObj;

@@ -97,8 +97,7 @@ BOOL CResourceMonitorApp::InitInstance()
 		RUNTIME_CLASS(CResourceMonitorView));
 	if (!pDocTemplate)
 		return FALSE;
-	AddDocTemplate(pDocTemplate);
-
+	AfxGetApp()->AddDocTemplate(pDocTemplate);
 
 	// 표준 셸 명령, DDE, 파일 열기에 대한 명령줄을 구문 분석합니다.
 	CCommandLineInfo cmdInfo;

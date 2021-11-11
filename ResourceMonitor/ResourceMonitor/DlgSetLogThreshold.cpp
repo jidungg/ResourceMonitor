@@ -57,7 +57,7 @@ void CDlgSetLogThreshold::OnBnClickedOk()
 	m_editMemThreshold.GetWindowTextW(strMem);
 
 	*cpuThreshold = _wtof(strCPU);
-	*memThreshold = _wtoi(strMem)*1024;
+	*memThreshold = _wtoi(strMem) * 1024;
 
 	CDialogEx::OnOK();
 }
@@ -71,7 +71,7 @@ BOOL CDlgSetLogThreshold::OnInitDialog()
 	CString str;
 	str.Format(_T("%.2f"), *cpuThreshold);
 	m_editCPUThreshold.SetWindowTextW(str);
-	str.Format(_T("%d"), (*memThreshold)/1024);
+	str.Format(_T("%d"), (*memThreshold) / 1024);
 	m_editMemThreshold.SetWindowTextW(str);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.

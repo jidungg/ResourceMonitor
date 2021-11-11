@@ -18,7 +18,8 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 	//info.isUnique = false;
 	//m_win32DiskDrive = new CPerfData();
 	//m_win32DiskDrive->Init(info, m_pDoc);
-	
+
+
 	info.className = L"Win32_PerfFormattedData_PerfProc_Process";
 	info.propertyNames = vector<CString>{ L"IDProcess", L"Name" , L"WorkingSet", L"PercentProcessorTime", L"IOReadBytesPersec", L"IOWriteBytesPersec"};
 	info.idIndex = 0;

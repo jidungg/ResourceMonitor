@@ -16,7 +16,7 @@
 using namespace std;
 
 #ifdef _DEBUG
-#define w DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 
@@ -99,7 +99,8 @@ void CResourceMonitorView::OnHdnItemclickList1(NMHDR * pNMHDR, LRESULT * pResult
 	int nColumn = pNMLV->iItem;
 
 	// 현 리스트 컨트롤에 있는 데이터 총 자료 개수만큼 저장
-	for (int i = 0; i < (m_processList.GetItemCount()); i++) {
+	for (int i = 0; i < (m_processList.GetItemCount()); i++)
+	{
 		m_processList.SetItemData(i, i);
 	}
 
@@ -158,10 +159,12 @@ int CResourceMonitorView::CompareItem(LPARAM lParam1, LPARAM lParam2, LPARAM lPa
 		int iItem1 = _tstoi(strItem1);
 		int iItem2 = _tstoi(strItem2);
 
-		if (bSortDirect) {
+		if (bSortDirect)
+		{
 			return iItem1 == iItem2 ? 0 : iItem1 > iItem2;
 		}
-		else {
+		else
+		{
 			return iItem1 == iItem2 ? 0 : iItem1 < iItem2;
 		}
 	}
@@ -176,10 +179,12 @@ int CResourceMonitorView::CompareItem(LPARAM lParam1, LPARAM lParam2, LPARAM lPa
 		double dItem1 = _wtof(strItem1);
 		double dItem2 = _wtof(strItem2);
 
-		if (bSortDirect) {
+		if (bSortDirect)
+		{
 			return dItem1 == dItem2 ? 0 : dItem1 > dItem2;
 		}
-		else {
+		else
+		{
 			return dItem1 == dItem2 ? 0 : dItem1 < dItem2;
 		}
 	}

@@ -45,10 +45,11 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
 로그 기능을 구현한 파일들.
 
 ## Usage
-단순히 exe파일을 실행시키면 된다. 추후 사용자 메뉴를 통한 여러 기능 추가 예정.   
+단순히 exe파일을 실행시키면 된다. 
+Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(threshold) 를 설정할 수 있다.
 실행화면  
-![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.0.1.PNG?raw=true)
+![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.1.2.PNG?raw=true)
 * * *  
-2021-11-08 v0.0.1 (제목목록.목록.내용)
+2021-11-12 v0.0.2 (제목목록.목록.내용)
 
 

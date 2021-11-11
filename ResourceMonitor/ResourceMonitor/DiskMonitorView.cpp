@@ -23,7 +23,6 @@ CDiskMonitorView::CDiskMonitorView()
 	m_tableCaptions.push_back(_T("Read(B/s)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
-	colCount = 3;
 }
 
 CDiskMonitorView::~CDiskMonitorView()
