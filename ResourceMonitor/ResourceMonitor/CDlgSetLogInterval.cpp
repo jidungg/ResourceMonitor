@@ -11,10 +11,10 @@
 
 IMPLEMENT_DYNAMIC(CDlgSetLogInterval, CDialogEx)
 
-CDlgSetLogInterval::CDlgSetLogInterval(CWnd* pParent /*=nullptr*/)
+CDlgSetLogInterval::CDlgSetLogInterval(int *n, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_SET_LOG_INTERVAL, pParent)
 {
-
+	interval = n;
 }
 
 CDlgSetLogInterval::~CDlgSetLogInterval()
@@ -41,6 +41,6 @@ void CDlgSetLogInterval::OnBnClickedOk()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CString str;
 	m_btnOK.GetWindowTextW(str);
-	CResourceMonitorDoc::LogInterval = _wtoi(str);
+	*interval = _wtoi(str);
 	CDialogEx::OnOK();
 }

@@ -38,7 +38,7 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 	m_perfDataManager = new CPerfDataManager(this);
-	LogInterval = LOG_INTERVAL;
+	//LogInterval = LOG_INTERVAL;
 }
 
 CResourceMonitorDoc::~CResourceMonitorDoc()
@@ -100,7 +100,7 @@ UINT CResourceMonitorDoc::AddPeriodicLog(LPVOID doc)
 		pView2->AddPeriodicLog();
 		pView3->AddPeriodicLog();
 		pView4->AddPeriodicLog();
-		Sleep(LOG_INTERVAL);
+		Sleep(pDoc->m_logInterval);
 	}
 	TRACE("AddPeriodicLog Func Out!!\n");
 	return EXIT_CODE;
