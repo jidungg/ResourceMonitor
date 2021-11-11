@@ -13,6 +13,7 @@
 #include "ResourceMonitorDoc.h"
 #include "PerfDataManager.h"
 #include "CDlgSetLogInterval.h"
+#include "DlgSetLogThreshold.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,6 +27,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SYSCOMMAND()
 	ON_COMMAND(ID_SET_LOG_INTERVAL, &CMainFrame::OnSetLogInterval)
+	ON_COMMAND(ID_LOG_SETTHRESHOLD, &CMainFrame::OnLogSetthreshold)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -142,21 +144,23 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		{
 			// exit evnet
 			CResourceMonitorDoc* d = (CResourceMonitorDoc*)GetActiveDocument();
-			
 			// thread loop 탈출 조건 설정
 			d->m_isExit = TRUE; 
+			CPerfDataManager* dm = d->m_perfDataManager;
 
 			// m_table claer 후 erase
-			d->m_perfDataManager->m_win32PerfFormatProc->CleanUpOnce();
-			d->m_perfDataManager->m_win32PerfFormatProc->Cleanup();
-			d->m_perfDataManager->m_win32PerfFormatProc->m_table->clear();
-			d->m_perfDataManager->m_win32PerfFormatProc->m_table->erase(d->m_perfDataManager->m_win32PerfFormatProc->m_table->begin(), d->m_perfDataManager->m_win32PerfFormatProc->m_table->end());
-			delete d->m_perfDataManager->m_win32PerfFormatProc->dataObj;
+			dm->m_win32PerfFormatProc->CleanUpOnce();
+			dm->m_win32PerfFormatProc->Cleanup();
+			dm->m_win32PerfFormatProc->m_table->clear();
+			dm->m_win32PerfFormatProc->m_table->erase(dm->m_win32PerfFormatProc->m_table->begin(), dm->m_win32PerfFormatProc->m_table->end());
+			delete dm->m_win32PerfFormatProc->m_table;
+			delete dm->m_win32PerfFormatProc->dataObj;
 
-			d->m_perfDataManager->m_win32OperatingSystem->Cleanup();
-			d->m_perfDataManager->m_win32OperatingSystem->m_table->clear();
-			d->m_perfDataManager->m_win32OperatingSystem->m_table->erase(d->m_perfDataManager->m_win32OperatingSystem->m_table->begin(), d->m_perfDataManager->m_win32OperatingSystem->m_table->end());
-			delete d->m_perfDataManager->m_win32OperatingSystem->dataObj;
+			dm->m_win32OperatingSystem->Cleanup();
+			dm->m_win32OperatingSystem->m_table->clear();
+			dm->m_win32OperatingSystem->m_table->erase(dm->m_win32OperatingSystem->m_table->begin(), dm->m_win32OperatingSystem->m_table->end());
+			delete dm->m_win32OperatingSystem->m_table;
+			delete dm->m_win32OperatingSystem->dataObj;
 	
 
 			// thread 종료
@@ -189,5 +193,14 @@ void CMainFrame::OnSetLogInterval()
 	dlg.DoModal();
 
 	return ;
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnLogSetthreshold()
+{
+	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
+	CDlgSetLogThreshold dlg(&(doc->m_cpuThreshold), &(doc->m_memThreshold));
+	dlg.DoModal();
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 }
