@@ -26,7 +26,7 @@ public:
 	CWinThread* m_updaterThread;
 	CWinThread* m_loggerThread;
 	BOOL m_isExit = FALSE;
-	static int LogInterval;
+	int m_logInterval = LOG_INTERVAL;
 // 작업입니다.
 public:
 	static UINT Update(LPVOID);

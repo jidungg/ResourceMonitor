@@ -8,7 +8,8 @@ class CDlgSetLogInterval : public CDialogEx
 	DECLARE_DYNAMIC(CDlgSetLogInterval)
 
 public:
-	CDlgSetLogInterval(CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	CDlgSetLogInterval(int *n, CWnd* pParent = nullptr);   // 표준 생성자입니다.
+
 	virtual ~CDlgSetLogInterval();
 
 // 대화 상자 데이터입니다.
@@ -22,5 +23,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CEdit m_btnOK;
+	int *interval;
 	afx_msg void OnBnClickedOk();
 };

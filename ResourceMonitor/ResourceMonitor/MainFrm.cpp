@@ -184,7 +184,8 @@ void CMainFrame::OnSetLogInterval()
 	//CDlgSetLogInterval *pDlg = new CDlgSetLogInterval;
 	//pDlg->Create(IDD_SET_LOG_INTERVAL);
 	//pDlg->ShowWindow(SW_SHOW);
-	CDlgSetLogInterval dlg;
+	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
+	CDlgSetLogInterval dlg(&(doc->m_logInterval));
 	dlg.DoModal();
 
 	return ;
