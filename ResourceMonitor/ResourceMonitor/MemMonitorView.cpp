@@ -142,7 +142,7 @@ void CMemMonitorView::AddPeriodicLog()
 	for (int j = 0; j < tableItemCount; j++)
 	{
 		ULONGLONG memUsage = _wtoi64(m_processList.GetItemText(j, 2));
-		if (memUsage >= LOG_MEM_THRESHOLD)
+		if (memUsage >= GetDocument()->m_memThreshold)
 		{
 			str = _T("");
 			for (int i = 0; i < tableColCount; ++i)

@@ -22,7 +22,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CEdit m_btnOK;
+	CEdit m_editInterval;
 	int *interval;
 	afx_msg void OnBnClickedOk();
+	virtual BOOL OnInitDialog();
 };

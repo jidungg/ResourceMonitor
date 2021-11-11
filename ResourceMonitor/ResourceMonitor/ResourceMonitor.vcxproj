@@ -21,21 +21,21 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A91EABDE-07B4-4728-ADA4-399147E5129B}</ProjectGuid>
     <RootNamespace>ResourceMonitor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -43,14 +43,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v1420</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -189,6 +189,7 @@
     <ClInclude Include="CDlgSetLogInterval.h" />
     <ClInclude Include="CPUMonitorView.h" />
     <ClInclude Include="DiskMonitorView.h" />
+    <ClInclude Include="DlgSetLogThreshold.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Logger_Base.h" />
     <ClInclude Include="MainFrm.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="CDlgSetLogInterval.cpp" />
     <ClCompile Include="CPUMonitorView.cpp" />
     <ClCompile Include="DiskMonitorView.cpp" />
+    <ClCompile Include="DlgSetLogThreshold.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Logger_Base.cpp" />
     <ClCompile Include="MainFrm.cpp" />

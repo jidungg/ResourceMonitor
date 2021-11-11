@@ -27,6 +27,8 @@ public:
 	CWinThread* m_loggerThread;
 	BOOL m_isExit = FALSE;
 	int m_logInterval = LOG_INTERVAL;
+	float m_cpuThreshold = LOG_CPU_THRESHOLD;
+	int m_memThreshold = LOG_MEM_THRESHOLD;
 // 작업입니다.
 public:
 	static UINT Update(LPVOID);

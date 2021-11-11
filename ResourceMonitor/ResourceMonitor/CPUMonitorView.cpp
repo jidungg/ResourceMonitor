@@ -119,8 +119,8 @@ void CCPUMonitorView::AddPeriodicLog()
 	for (int j = 0; j < tableItemCount; j++)
 	{
 		float useRate = _wtof(m_processList.GetItemText(j, 2));
-
-		if (useRate >= LOG_CPU_THRESHOLD)
+		
+		if (useRate >= GetDocument()->m_cpuThreshold)
 		{
 			str = _T("");
 			for (int i = 0; i < tableColCount; ++i)
