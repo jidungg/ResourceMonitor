@@ -50,7 +50,7 @@ Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(thresh
 Disk 뷰의 프레임을 더블클릭해 콤보박스 컨트롤을 사용할 수 있다. 콤보박스 안에서 파티션을 선택해 용량을 확인할 수 있다.
 실행화면  
 ![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.1.2.PNG?raw=true)
-![콤보박스](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.1.2.PNG?raw=true)
+![콤보박스](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.2.0.PNG?raw=true)
 ## Precautions
 현재 2008 버전만 업데이트 중. 2015버전은 잠정 중단.  
 * * *  
