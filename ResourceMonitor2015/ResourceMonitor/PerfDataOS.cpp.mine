@@ -1,0 +1,94 @@
+#include "stdafx.h"
+#include "PerfDataOS.h"
+#include "ResourceMonitorDoc.h"
+
+
+CPerfDataOS::CPerfDataOS()
+{
+}
+
+
+CPerfDataOS::~CPerfDataOS()
+{
+}
+
+void CPerfDataOS::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
+{
+	table = new map<ULONGLONG, OSDataObj>;
+	CPerfData::Init(info, doc);
+}
+
+void CPerfDataOS::GetData()
+{
+	OSDataObj obj;
+	obj.flag = true;
+	ULONGLONG ID;
+	VARIANT propertyVal;
+	while (TRUE)
+	{
+		if (m_pDoc->m_isExit == TRUE)
+		{
+			break;
+		}
+
+		CPerfData::Refresh();
+		m.lock();
+		for (unsigned int i = 0; i < dwNumReturned; i++)
+		{
+			for (int j = 0; j < m_nProps; ++j)
+			{
+				if (FAILED(hr = apEnumAccess[i]->Get(propertyNames[j], 0, &propertyVal, 0, 0)))
+				{
+					Cleanup();
+					break;
+				}
+				switch (j)
+				{
+				case OS_FREEPHYSICALMEM:
+					obj.freePhysicalMemory = propertyVal.bstrVal;
+					break;
+				case OS_TOTALVISIBLEMEM:
+					obj.totalVisibleMemory = propertyVal.bstrVal;
+					ID = _wtoi64(propertyVal.bstrVal) ;
+					break;
+
+				default:
+					break;
+				}
+				VariantClear(&propertyVal);
+			}
+
+			if (table->empty())
+			{
+				table->insert({ ID, obj });
+			}
+			else
+			{
+				if (!isUnique)
+				{
+					(*table)[ID] = obj;
+				}
+				else
+				{
+					table->begin()->second = obj;
+				}
+			}
+
+			//clear
+
+			obj.Clear();
+			apEnumAccess[i]->Release();
+			apEnumAccess[i] = NULL;
+		}
+
+
+		if (NULL != apEnumAccess)
+		{
+			delete[] apEnumAccess;
+			apEnumAccess = NULL;
+		}
+		// Sleep for a second.
+		m.unlock();
+		Sleep(UPDATE_INTERVAL);
+	}
+}
