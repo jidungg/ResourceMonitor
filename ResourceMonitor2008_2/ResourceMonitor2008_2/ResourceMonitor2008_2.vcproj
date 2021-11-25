@@ -231,6 +231,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetworkPerformanceItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkPerformanceScanner.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PerfData.cpp"
 				>
 			</File>
@@ -330,6 +338,14 @@
 			</File>
 			<File
 				RelativePath=".\NetMonitorView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkPerformanceItem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetworkPerformanceScanner.h"
 				>
 			</File>
 			<File

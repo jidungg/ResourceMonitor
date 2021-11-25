@@ -116,11 +116,12 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 		{
 			continue;
 		}
-		CString totalSpace;
-		totalSpace = iter->second.size;
-		CString usingSapce;
-		ULONGLONG iusingSpace = _wtoi64(totalSpace) - _wtoi64(iter->second.freeSpace);
-		usingSapce.Format(_T("%llu"), iusingSpace);
+		CString totalSpace= iter->second.size;
+		ULONGLONG ulltotalSpace = _wtoi64(totalSpace) ;
+		totalSpace.Format(_T("%llu"), ulltotalSpace / 1024 / 1024);
+		CString usingSapce = iter->second.freeSpace;
+		ULONGLONG ullusingSpace = ulltotalSpace - _wtoi64(usingSapce);
+		usingSapce.Format(_T("%llu"), ullusingSpace / 1024 / 1024);
 
 
 		if (m_farmeList.GetItemCount() == 0)

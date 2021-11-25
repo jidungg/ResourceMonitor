@@ -49,10 +49,13 @@ void CNetMonitorView::OnInitialUpdate()
 }
 void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
-	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
+	map<ULONGLONG, PerProcessDataObj>	*procTable = dataManager->m_win32PerfFormatProc->m_table;
+	map<INT,NetworkPerformanceItem> *netTable = dataManager->m_netPerfScanner->m_table;
 
-	map<ULONGLONG, PerProcessDataObj>	*table = perfData->m_table;
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = table->begin(); iter != table->end(); iter++)
+	CString bytesIn;
+	CString bytesOut;
+
+	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = procTable->begin(); iter != procTable->end(); iter++)
 	{
 		CString id;
 		id.Format(_T("%lu"), iter->first);
@@ -72,11 +75,33 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 		else
 		{
 			m_processList.SetItemText(nIndex, 1, name);
+
 		}
+		bytesIn = _T("0");
+		bytesOut = _T("0");
+
 		id.Empty();
 		name.Empty();
 	}
+	
+	for(map<INT,NetworkPerformanceItem>::iterator iter = netTable->begin(); iter != netTable->end(); iter++)
+	{
+		CString id;
+		id.Format(_T("%d"), iter->first);
 
+		bytesIn.Format(_T("%llu"),iter->second.BytesIn);
+		bytesOut.Format(_T("%llu"),iter->second.BytesOut);
+		LVFINDINFO info;
+		int nIndex;
+		info.flags = LVFI_STRING;
+		info.psz = id;
+
+		if ((nIndex = m_processList.FindItem(&info)) != -1)
+		{
+			m_processList.SetItemText(nIndex,2, bytesIn);
+			m_processList.SetItemText(nIndex,3, bytesOut);
+		}
+	}
 }
 void CNetMonitorView::AddPeriodicLog()
 {
