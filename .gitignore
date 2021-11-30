@@ -269,7 +269,7 @@ ipch/
 
 # image files
 *.ico
-*.rc
+
 
 
 *.res

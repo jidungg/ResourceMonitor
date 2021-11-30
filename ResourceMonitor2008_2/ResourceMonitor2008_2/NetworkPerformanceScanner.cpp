@@ -5,33 +5,27 @@
 
 NetworkPerformanceScanner::NetworkPerformanceScanner()
 {
-	m_table = new map<INT,NetworkPerformanceItem>;
-	m_recent1SecTable = new map<INT,NetworkPerformanceItem>;
-
+	m_oldTable = new map<ULONGLONG,NetworkPerformanceItem>;
+	m_newTable = new map<ULONGLONG,NetworkPerformanceItem>;
+	m_diffTable = new map<ULONGLONG,NetworkPerformanceItem>;
 }
 
 
 NetworkPerformanceScanner::~NetworkPerformanceScanner()
 {
-	delete m_table;
-	delete m_recent1SecTable;
-
+	delete m_oldTable;
+	delete m_newTable;
+	delete m_diffTable;
 }
 
 // TODO - implement TCP v6, UDP
 void NetworkPerformanceScanner::ScanNetworkPerformance(int pass)
 {
-	(*m_table).clear();
+	(*m_newTable).clear();
     std::vector<unsigned char> buffer;
     DWORD dwSize = sizeof(MIB_TCPTABLE_OWNER_PID);
     DWORD dwRetValue = 0;
-    vector<NetworkPerformanceItem> networkPerformanceItems;
-
-    //get local computer time with timezone offset
-    //auto time = std::time(nullptr);
-    //std::ostringstream timeStream;
-    //timeStream << std::put_time(std::localtime(&time), "%F %T%z");
-    //string collectionTime = timeStream.str();
+    //vector<NetworkPerformanceItem> networkPerformanceItems;;
 
     // repeat till buffer is big enough
     do
@@ -48,9 +42,6 @@ void NetworkPerformanceScanner::ScanNetworkPerformance(int pass)
         // cast to access element values
         PMIB_TCPTABLE_OWNER_PID ptTable = reinterpret_cast<PMIB_TCPTABLE_OWNER_PID>(&buffer[0]);
 
-        //cout << "Number of Entries: " << ptTable->dwNumEntries << endl << endl;
-
-
         // caution: array starts with index 0, count starts by 1
         for (DWORD i = 0; i < ptTable->dwNumEntries; i++)
         {
@@ -58,9 +49,6 @@ void NetworkPerformanceScanner::ScanNetworkPerformance(int pass)
 
             networkPerformanceItem.ProcessId = ptTable->table[i].dwOwningPid;
             networkPerformanceItem.State = ptTable->table[i].dwState;           
-
-            //cout << "PID: " << ptTable->table[i].dwOwningPid << endl;
-            //cout << "State: " << ptTable->table[i].dwState << endl;
 
             std::ostringstream localStream;
             localStream << (ptTable->table[i].dwLocalAddr & 0xFF)
@@ -138,58 +126,56 @@ void NetworkPerformanceScanner::ScanNetworkPerformance(int pass)
 					networkPerformanceItem.BytesOut = 0;
 				}
 
+				//get bandwidth 
+                //PTCP_ESTATS_BANDWIDTH_ROD_v0 bandwidthRod = { 0 };
 
-                PTCP_ESTATS_BANDWIDTH_ROD_v0 bandwidthRod = { 0 };
+                //rodSize = sizeof(TCP_ESTATS_BANDWIDTH_ROD_v0);
+                //if (rodSize != 0) {
+                //    rod = (PUCHAR)malloc(rodSize);
+                //    if (rod == NULL) {
+                //        free(ros);
+                //        wprintf(L"\nOut of memory");
+                //        return ;
+                //    }
+                //    else
+                //        memset(rod, 0, rodSize); // zero the buffer
+                //}
 
-                rodSize = sizeof(TCP_ESTATS_BANDWIDTH_ROD_v0);
-                if (rodSize != 0) {
-                    rod = (PUCHAR)malloc(rodSize);
-                    if (rod == NULL) {
-                        free(ros);
-                        wprintf(L"\nOut of memory");
-                        return ;
-                    }
-                    else
-                        memset(rod, 0, rodSize); // zero the buffer
-                }
+                //winStatus = GetPerTcpConnectionEStats((PMIB_TCPROW)&row,TcpConnectionEstatsBandwidth, NULL, 0, 0, ros, 0, rosSize, rod, 0, rodSize);
 
-                winStatus = GetPerTcpConnectionEStats((PMIB_TCPROW)&row,TcpConnectionEstatsBandwidth, NULL, 0, 0, ros, 0, rosSize, rod, 0, rodSize);
-
-                bandwidthRod = (PTCP_ESTATS_BANDWIDTH_ROD_v0)rod;
-                networkPerformanceItem.OutboundBandwidth = bandwidthRod->OutboundBandwidth;
-                networkPerformanceItem.InboundBandwidth = bandwidthRod->InboundBandwidth;
+                //bandwidthRod = (PTCP_ESTATS_BANDWIDTH_ROD_v0)rod;
+                //networkPerformanceItem.OutboundBandwidth = bandwidthRod->OutboundBandwidth;
+                //networkPerformanceItem.InboundBandwidth = bandwidthRod->InboundBandwidth;
 
             }
-            networkPerformanceItem.Pass = pass;
+            //networkPerformanceItem.Pass = pass;
             //networkPerformanceItem.CollectionTime = collectionTime;
-            networkPerformanceItems.push_back(networkPerformanceItem);
+            //networkPerformanceItems.push_back(networkPerformanceItem);
 
 
-			LONG diffOUT = networkPerformanceItem.BytesOut  - (*m_table)[networkPerformanceItem.ProcessId].BytesOut;
-			LONG diffIN = networkPerformanceItem.BytesIn  - (*m_table)[networkPerformanceItem.ProcessId].BytesIn;
 
-			map<INT,NetworkPerformanceItem>::iterator it = (*m_table).find(networkPerformanceItem.ProcessId);
-			if(it != (*m_table).end())
+			map<ULONGLONG,NetworkPerformanceItem>::iterator it = (*m_newTable).find(networkPerformanceItem.ProcessId);
+			if(it != (*m_newTable).end())
 			{
-				(*m_table)[networkPerformanceItem.ProcessId].BytesIn += networkPerformanceItem.BytesIn;
-				(*m_table)[networkPerformanceItem.ProcessId].BytesOut += networkPerformanceItem.BytesOut;
+				(*m_newTable)[networkPerformanceItem.ProcessId].BytesIn += networkPerformanceItem.BytesIn;
+				(*m_newTable)[networkPerformanceItem.ProcessId].BytesOut += networkPerformanceItem.BytesOut;
 			}else
 			{
-
-
-				(*m_table)[networkPerformanceItem.ProcessId] = networkPerformanceItem;
+				(*m_newTable)[networkPerformanceItem.ProcessId] = networkPerformanceItem;
 			}
 
-			networkPerformanceItem.BytesIn = diffIN;
-			networkPerformanceItem.BytesOut = diffOUT;
-
-			(*m_recent1SecTable)[networkPerformanceItem.ProcessId] = networkPerformanceItem;
         }
     }
     else
     {
         // bad case, do some sh*t here
     }
-
+	
+	for(map<ULONGLONG,NetworkPerformanceItem>::iterator it = m_newTable->begin(); it != m_newTable->end(); it++)
+	{
+		(*m_diffTable)[it->first].BytesIn = it->second.BytesIn  - (*m_oldTable)[it->first].BytesIn ;
+		(*m_diffTable)[it->first].BytesOut = it->second.BytesOut  - (*m_oldTable)[it->first].BytesOut ;
+	}
+	m_oldTable->swap(*m_newTable); 
     return ;
 }

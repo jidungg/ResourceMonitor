@@ -29,7 +29,8 @@ public:
     NetworkPerformanceScanner();
     ~NetworkPerformanceScanner();
 
-	map<INT,NetworkPerformanceItem> *m_table;
-	map<INT,NetworkPerformanceItem> *m_recent1SecTable;
+	map<ULONGLONG,NetworkPerformanceItem> *m_oldTable;
+	map<ULONGLONG,NetworkPerformanceItem> *m_newTable;
+	map<ULONGLONG,NetworkPerformanceItem> *m_diffTable;
     void ScanNetworkPerformance(int sampleId);
 };

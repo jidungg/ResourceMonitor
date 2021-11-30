@@ -9,7 +9,7 @@ public:
     NetworkPerformanceItem();
     ~NetworkPerformanceItem();
 
-    INT ProcessId;
+    ULONGLONG ProcessId;
     INT State;
     std::string LocalAddress;
     std::string RemoteAddress;
@@ -17,8 +17,8 @@ public:
     int RemotePort;
     ULONGLONG BytesOut;
     ULONGLONG BytesIn;
-    LONG OutboundBandwidth;
-    LONG InboundBandwidth;
+    //LONG OutboundBandwidth;
+    //LONG InboundBandwidth;
     int Pass;
     std::string CollectionTime;
 

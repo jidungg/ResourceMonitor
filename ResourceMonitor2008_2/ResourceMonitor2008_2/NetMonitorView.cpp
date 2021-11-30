@@ -50,17 +50,54 @@ void CNetMonitorView::OnInitialUpdate()
 void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 	map<ULONGLONG, PerProcessDataObj>	*procTable = dataManager->m_win32PerfFormatProc->m_table;
-	map<INT,NetworkPerformanceItem> *netTable = dataManager->m_netPerfScanner->m_table;
+	map<ULONGLONG,NetworkPerformanceItem> *netTable = dataManager->m_netPerfScanner->m_diffTable;
 
 	CString bytesIn;
 	CString bytesOut;
+	CString id;
+	CString name;
 
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = procTable->begin(); iter != procTable->end(); iter++)
+	//for (map<ULONGLONG, PerProcessDataObj>::iterator iter = procTable->begin(); iter != procTable->end(); iter++)
+	//{
+
+	//	id.Format(_T("%lu"), iter->first);
+	//	CString name;
+	//	name = iter->second.name;
+	//	LVFINDINFO info;
+	//	int nIndex;
+	//	info.flags = LVFI_STRING;
+	//	info.psz = id;
+	//	if ((nIndex = m_processList.FindItem(&info)) == -1)
+	//	{
+	//		m_processList.InsertItem(0, id);
+
+	//		m_processList.SetItemText(0, 1, name);
+
+	//	}
+	//	else
+	//	{
+	//		m_processList.SetItemText(nIndex, 1, name);
+
+	//	}
+	//	bytesIn = _T("0");
+	//	bytesOut = _T("0");
+
+	//	id.Empty();
+	//	name.Empty();
+	//}
+	//nettable 순회하면서 bytesin, out 쓰기
+	for(map<ULONGLONG,NetworkPerformanceItem>::iterator iter = netTable->begin(); iter != netTable->end(); iter++)
 	{
-		CString id;
-		id.Format(_T("%lu"), iter->first);
-		CString name;
-		name = iter->second.name;
+
+		id.Format(_T("%d"), iter->first);
+		map<ULONGLONG, PerProcessDataObj>::iterator foundIt = procTable->find(iter->first);
+		if(foundIt != procTable->end())
+		{
+			name = foundIt->second.name;
+		}
+		bytesIn.Format(_T("%llu"),iter->second.BytesIn);
+		bytesOut.Format(_T("%llu"),iter->second.BytesOut);
+
 		LVFINDINFO info;
 		int nIndex;
 		info.flags = LVFI_STRING;
@@ -68,39 +105,19 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
 			m_processList.InsertItem(0, id);
-
-			m_processList.SetItemText(0, 1, name);
+			m_processList.SetItemText(0,1, name);
+			m_processList.SetItemText(0,2, bytesIn);
+			m_processList.SetItemText(0,3, bytesOut);
 
 		}
 		else
 		{
-			m_processList.SetItemText(nIndex, 1, name);
-
-		}
-		bytesIn = _T("0");
-		bytesOut = _T("0");
-
-		id.Empty();
-		name.Empty();
-	}
-	
-	for(map<INT,NetworkPerformanceItem>::iterator iter = netTable->begin(); iter != netTable->end(); iter++)
-	{
-		CString id;
-		id.Format(_T("%d"), iter->first);
-
-		bytesIn.Format(_T("%llu"),iter->second.BytesIn);
-		bytesOut.Format(_T("%llu"),iter->second.BytesOut);
-		LVFINDINFO info;
-		int nIndex;
-		info.flags = LVFI_STRING;
-		info.psz = id;
-
-		if ((nIndex = m_processList.FindItem(&info)) != -1)
-		{
+			m_processList.SetItemText(nIndex,1, name);
 			m_processList.SetItemText(nIndex,2, bytesIn);
 			m_processList.SetItemText(nIndex,3, bytesOut);
+
 		}
+
 	}
 }
 void CNetMonitorView::AddPeriodicLog()
