@@ -45,7 +45,7 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 	m_win32OperatingSystem = new CPerfDataOS();
 	m_win32OperatingSystem->Init(info, m_pDoc);
 	
-	m_netPerfScanner = new NetworkPerformanceScanner;
+	m_netPerfScanner = new NetworkPerformanceScanner(m_pDoc);
 }
 
 
@@ -71,7 +71,7 @@ void CPerfDataManager::RefreshData()
 	m_win32PerfFormatProc->GetData();
 	m_win32OperatingSystem->GetData();
 	m_win32DiskDrive->GetData();
-	m_netPerfScanner-> ScanNetworkPerformance(0);
+	m_netPerfScanner-> GetData();
 }
 
 

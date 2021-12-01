@@ -19,6 +19,7 @@ public:
     ULONGLONG BytesIn;
     //LONG OutboundBandwidth;
     //LONG InboundBandwidth;
+	bool liveFlag;
     int Pass;
     std::string CollectionTime;
 

@@ -32,7 +32,7 @@ public:
 	// Thread 종료 함수
 	void ExitThread(); 
 	void AtExitProcess(std::vector<ULONGLONG>* exitedProcIDs);
-
+	void AtStoppedNetProcess(std::vector<ULONGLONG>* stoppedProcIDs);
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 

@@ -1,5 +1,5 @@
 #pragma once
-#define VERSION "v1.2.0" //21-11-19 Disk 파티션 콤보박스 추가
+#define VERSION "v1.2.1" //21-12-01 Network TCP IPv4 최근1초 사용량 출력
 
 #define FRAME_WIDTH 55
 

@@ -22,15 +22,22 @@ using namespace std;
 
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x)) 
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
+class CResourceMonitorDoc;
 
 class NetworkPerformanceScanner
 {
 public:
-    NetworkPerformanceScanner();
+    NetworkPerformanceScanner(CResourceMonitorDoc* doc);
     ~NetworkPerformanceScanner();
 
-	map<ULONGLONG,NetworkPerformanceItem> *m_oldTable;
-	map<ULONGLONG,NetworkPerformanceItem> *m_newTable;
-	map<ULONGLONG,NetworkPerformanceItem> *m_diffTable;
-    void ScanNetworkPerformance(int sampleId);
+	vector<ULONGLONG>						m_stoppedProcIDs;
+	CResourceMonitorDoc						*m_pDoc ;
+	map<ULONGLONG,NetworkPerformanceItem>	*m_oldTable;
+	map<ULONGLONG,NetworkPerformanceItem>	*m_newTable;
+	map<ULONGLONG,NetworkPerformanceItem>	*m_diffTable;
+
+	void GetData();
+    void ScanTCPPerformance();
+    void ScanUDPPerformance();
+	void ArrangeTable();
 };

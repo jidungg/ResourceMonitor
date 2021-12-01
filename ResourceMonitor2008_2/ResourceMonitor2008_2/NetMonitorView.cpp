@@ -94,6 +94,7 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 		if(foundIt != procTable->end())
 		{
 			name = foundIt->second.name;
+
 		}
 		bytesIn.Format(_T("%llu"),iter->second.BytesIn);
 		bytesOut.Format(_T("%llu"),iter->second.BytesOut);
@@ -112,9 +113,14 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 		}
 		else
 		{
+
 			m_processList.SetItemText(nIndex,1, name);
 			m_processList.SetItemText(nIndex,2, bytesIn);
 			m_processList.SetItemText(nIndex,3, bytesOut);
+			if(name.Compare(_T("RonsAgent")) == 0)
+			{
+				int a =0;
+			}
 
 		}
 

@@ -123,7 +123,20 @@ void CResourceMonitorDoc::AtExitProcess(vector<ULONGLONG>* exitedProcIDs)
 	pView3->RemoveProcessFromList(exitedProcIDs);
 	pView4->RemoveProcessFromList(exitedProcIDs);
 }
+void CResourceMonitorDoc::AtStoppedNetProcess(vector<ULONGLONG>* stoppedProcIDs)
+{
+	if (this == NULL)return;
+	POSITION pos = this->GetFirstViewPosition();
+	CResourceMonitorView* pView1 = (CResourceMonitorView*)this->GetNextView(pos);
+	CResourceMonitorView* pView2 = (CResourceMonitorView*)this->GetNextView(pos);
+	CResourceMonitorView* pView3 = (CResourceMonitorView*)this->GetNextView(pos);
+	CResourceMonitorView* pView4 = (CResourceMonitorView*)this->GetNextView(pos);
 
+	//pView1->RemoveProcessFromList(stoppedProcIDs);
+	//pView2->RemoveProcessFromList(stoppedProcIDs);
+	//pView3->RemoveProcessFromList(stoppedProcIDs);
+	pView4->RemoveProcessFromList(stoppedProcIDs);
+}
 void CResourceMonitorDoc::ExitThread()
 {
 	DWORD dwRetCode = WaitForSingleObject(m_updaterThread->m_hThread, INFINITE);
