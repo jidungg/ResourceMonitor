@@ -44,7 +44,7 @@ void CResourceMonitorView::InitTable()
 {
 	CRect rect;
 	GetClientRect(&rect);
-	m_processList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, FRAME_WIDTH, rect.Width(), rect.Height()), this, 100);
+	m_processList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, m_frameWidth, rect.Width(), rect.Height()), this, 100);
 	m_processList.SetColumnWidth(m_tableCaptions.size(), LVSCW_AUTOSIZE_USEHEADER);
 	m_processList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER);
 
@@ -52,7 +52,7 @@ void CResourceMonitorView::InitTable()
 	{
 		m_processList.InsertColumn(0, *iter, LVCFMT_LEFT, 150, 0);
 	}
-
+	m_processList.ShowScrollBar(SB_BOTH, FALSE);
 }
 void CResourceMonitorView::InitFrame()
 {
@@ -60,7 +60,7 @@ void CResourceMonitorView::InitFrame()
 
 	CRect rect;
 	GetClientRect(&rect);
-	m_farmeList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, 0, rect.Width(), FRAME_WIDTH), this, 100);
+	m_farmeList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT, CRect(0, 0, rect.Width(), m_frameWidth), this, 100);
 
 	m_farmeList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVSICF_NOSCROLL);
 	m_farmeList.ShowScrollBar(SB_BOTH, FALSE);
@@ -72,7 +72,7 @@ void CResourceMonitorView::InitFrame()
 		m_farmeList.InsertColumn(i, *iter, LVCFMT_LEFT, 200, 0);
 		//m_farmeList.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
 	}
- 
+ 	m_farmeList.ShowScrollBar(SB_BOTH, FALSE);
 
 	m_bInit = true;
 }
@@ -294,6 +294,7 @@ void CResourceMonitorView::OnSize(UINT nType, int cx, int cy)
 	m_processList.MoveWindow(0, FRAME_WIDTH, cx, cy-FRAME_WIDTH,TRUE);
 	m_farmeList.MoveWindow(0, 0, cx, FRAME_WIDTH, TRUE);
 	m_farmeList.ShowScrollBar(SB_BOTH, FALSE);
+	m_processList.ShowScrollBar(SB_BOTH, FALSE);
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 
 }

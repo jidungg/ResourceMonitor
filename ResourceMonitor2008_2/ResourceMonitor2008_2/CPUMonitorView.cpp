@@ -19,7 +19,7 @@ CCPUMonitorView::CCPUMonitorView()
 	m_tableCaptions.push_back(_T("Usage rate"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
-
+	m_frameWidth = FRAME_WIDTH;
 }
 
 CCPUMonitorView::~CCPUMonitorView()

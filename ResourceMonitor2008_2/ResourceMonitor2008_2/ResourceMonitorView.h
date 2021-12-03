@@ -31,10 +31,10 @@ public:
 
 	BOOL m_bInit ;
 	BOOL m_bAscending; // 오름, 내림차순 정렬 flag
-
+	int	m_frameWidth;
 	CString m_title;
 	CListCtrl m_processList;
-	CAdvListCtrl m_farmeList;
+	CListCtrl m_farmeList;
 	//CAdvListCtrl m_advFrameList;
 	vector<CString> m_frameProps;		//frame에 사용할 WMI의 속성 이름
 	vector<CString> m_tableProps;		//table에 사용할 WMI의 속성 이름
@@ -53,7 +53,7 @@ public:
 	virtual void OnDraw(CDC* pDC);  
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg virtual void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnHdnItemclickList1(NMHDR *pNMHDR, LRESULT *pResult);
 	static int CALLBACK CompareItem(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); // 정렬 관련 함수
 

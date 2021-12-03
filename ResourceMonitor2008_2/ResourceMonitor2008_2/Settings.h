@@ -1,7 +1,8 @@
 #pragma once
-#define VERSION "v1.2.0" //21-11-19 Disk 파티션 콤보박스 추가
+#define VERSION "v1.3.0" //21-12-03 Disk 파티션 콤보박스 삭제
 
 #define FRAME_WIDTH 55
+#define FRAME_WIDTH_ITEM 30
 
 #define UPDATE_INTERVAL 1000
 #define LOG_INTERVAL 1000

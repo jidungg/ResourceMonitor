@@ -47,15 +47,15 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
 ## Usage
 단순히 exe파일을 실행시키면 된다. 
 Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(threshold) 를 설정할 수 있다.  
-Disk 뷰의 프레임을 더블클릭해 콤보박스 컨트롤을 사용할 수 있다. 콤보박스 안에서 파티션을 선택해 용량을 확인할 수 있다.
+
 실행화면  
-![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.1.2.PNG?raw=true)
-![콤보박스](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.2.0.PNG?raw=true)
+![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.3.0.PNG?raw=true)
+
 ## Precautions
 현재 2008 버전만 업데이트 중. 2015버전은 잠정 중단.  
 * * *  
 
 
-2021-11-12 v1.0.0 (제목목록.목록.내용)
+2021-12-03 v1.0.1 (제목목록.목록.내용)
 
 

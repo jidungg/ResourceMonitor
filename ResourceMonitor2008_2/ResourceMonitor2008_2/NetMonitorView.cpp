@@ -19,7 +19,7 @@ CNetMonitorView::CNetMonitorView()
 	m_tableCaptions.push_back(_T("Send(B/s)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
-
+	m_frameWidth = FRAME_WIDTH;
 }
 
 CNetMonitorView::~CNetMonitorView()

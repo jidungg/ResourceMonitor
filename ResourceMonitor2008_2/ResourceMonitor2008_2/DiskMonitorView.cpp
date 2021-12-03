@@ -19,13 +19,12 @@ CDiskMonitorView::CDiskMonitorView()
 	m_frameCaptions.push_back(_T("Total(MB): "));
 	m_frameCaptions.push_back(_T("Using(MB): "));
 
-
 	m_tableCaptions.push_back(_T("Write(B/s)"));
 	m_tableCaptions.push_back(_T("Read(B/s)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
 
-
+	m_frameWidth = 3* FRAME_WIDTH_ITEM;
 }
 
 CDiskMonitorView::~CDiskMonitorView()
@@ -38,14 +37,12 @@ END_MESSAGE_MAP()
 
 
 // CDiskMonitorView 그리기입니다.
- void CDiskMonitorView::InitFrame()
-{
-	CResourceMonitorView::InitFrame();
-	m_farmeList.InsertItem(0,_T("C:"));
-	m_farmeList.SetColumnCombo(0);
-}
+
 void CDiskMonitorView::OnInitialUpdate()
-{
+{/*
+	map<CString, LogicalDiskDataObj>	*diskTable =dataManager->m_win32DiskDrive->m_table;
+	int diskCount = diskTable->size();*/
+
 	CScrollView::OnInitialUpdate();
 
 	CSize sizeTotal;
@@ -58,7 +55,15 @@ void CDiskMonitorView::OnInitialUpdate()
 	InitTable();
 	InitFrame();
 }
-
+void CDiskMonitorView::OnSize(UINT nType, int cx, int cy)
+{
+	CScrollView::OnSize(nType, cx, cy);
+	if (!m_bInit)
+		return;
+	m_processList.MoveWindow(0, 3* FRAME_WIDTH_ITEM, cx, cy-(3* FRAME_WIDTH_ITEM),TRUE);
+	m_farmeList.MoveWindow(0, 0, cx, 3* FRAME_WIDTH_ITEM, TRUE);
+	m_farmeList.ShowScrollBar(SB_BOTH, FALSE);
+}
 void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 
@@ -103,54 +108,57 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
     //lstItems.AddTail(L"Item 1");  
     //lstItems.AddTail(L"Item 2"); 
 
-	m_farmeList.lstItems.RemoveAll();
+	//m_farmeList.lstItems.RemoveAll();
 
 	for (map<CString, LogicalDiskDataObj>::iterator iter = diskTable->begin(); iter != diskTable->end(); iter++)
 	{
 		CString id;
 		id = iter->first;
 
-		m_farmeList.lstItems.AddTail(id);
+		//m_farmeList.lstItems.AddTail(id);
 
-		if(id.Compare(m_farmeList.GetItemText(0,0)) != 0)
-		{
-			continue;
-		}
+		//if(id.Compare(m_farmeList.GetItemText(0,0)) != 0)
+		//{
+		//	continue;
+		//}
 		CString totalSpace;
-		totalSpace = iter->second.size;
+		ULONGLONG itotalSpace = _wtoi64(iter->second.size);
+		totalSpace.Format(_T("%llu"), itotalSpace/1024/1024);
+
 		CString usingSapce;
-		ULONGLONG iusingSpace = _wtoi64(totalSpace) - _wtoi64(iter->second.freeSpace);
-		usingSapce.Format(_T("%llu"), iusingSpace);
+		ULONGLONG iusingSpace = itotalSpace - _wtoi64(iter->second.freeSpace);
+		usingSapce.Format(_T("%llu"), iusingSpace/1024/1024);
 
 
-		if (m_farmeList.GetItemCount() == 0)
-		{
-			m_farmeList.InsertItem(0, id);
-			m_farmeList.SetItemText(0, 1, totalSpace);
-			m_farmeList.SetItemText(0, 2, usingSapce);
-		}else
-		{
-			m_farmeList.SetItemText(0, 0, id);
-			m_farmeList.SetItemText(0, 1, totalSpace);
-			m_farmeList.SetItemText(0, 2, usingSapce);
-		}
-		//LVFINDINFO info;
-		//int nIndex;
-		//info.flags = LVFI_STRING;
-		//info.psz = id;
 
-		//if ((nIndex = m_farmeList.FindItem(&info)) == -1)
+		//if (m_farmeList.GetItemCount() == 0)
 		//{
 		//	m_farmeList.InsertItem(0, id);
-
+		//	m_farmeList.SetItemText(0, 1, totalSpace);
+		//	m_farmeList.SetItemText(0, 2, usingSapce);
+		//}else
+		//{
+		//	m_farmeList.SetItemText(0, 0, id);
 		//	m_farmeList.SetItemText(0, 1, totalSpace);
 		//	m_farmeList.SetItemText(0, 2, usingSapce);
 		//}
-		//else
-		//{
-		//	m_farmeList.SetItemText(nIndex, 1, totalSpace);
-		//	m_farmeList.SetItemText(nIndex, 2, usingSapce);
-		//}
+		LVFINDINFO info;
+		int nIndex;
+		info.flags = LVFI_STRING;
+		info.psz = id;
+
+		if ((nIndex = m_farmeList.FindItem(&info)) == -1)
+		{
+			m_farmeList.InsertItem(0, id);
+
+			m_farmeList.SetItemText(0, 1, totalSpace);
+			m_farmeList.SetItemText(0, 2, usingSapce);
+		}
+		else
+		{
+			m_farmeList.SetItemText(nIndex, 1, totalSpace);
+			m_farmeList.SetItemText(nIndex, 2, usingSapce);
+		}
 		
 	}
 

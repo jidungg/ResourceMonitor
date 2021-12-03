@@ -14,13 +14,13 @@ public:
 	CDiskMonitorView();           // 동적 만들기에 사용되는 protected 생성자입니다.
 	virtual ~CDiskMonitorView();
 
-	virtual void InitFrame();
 	virtual void UpdateView(class CPerfDataManager* dataManager);
 	virtual void AddPeriodicLog();
 
 
 protected:
 	virtual void OnInitialUpdate();     // 생성된 후 처음입니다.
+	virtual void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
 
 #ifdef _DEBUG

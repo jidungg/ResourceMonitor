@@ -23,7 +23,7 @@ CMemMonitorView::CMemMonitorView()
 	m_tableCaptions.push_back(_T("Usage(KB)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
-
+	m_frameWidth = FRAME_WIDTH;
 }
 
 CMemMonitorView::~CMemMonitorView()
