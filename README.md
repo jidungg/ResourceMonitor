@@ -3,10 +3,11 @@
 ## Description
 회사 팀에서 시스템 자원 모니터링이 필요한데 윈도우 기본 프로그램인 작업관리자, 리소스모니터 등에는 로그를 남기는 기능이 없었기 때문에 자체적으로 제작하게 되었다.
 따라서 이 프로그램은 기존 윈도우 기본 프로그램 리소스모니터 에서 로그 기능을 추가한 형태가 될 것이다.
-GUI는 MFC를 통해 구현했으며, CPU, Memory Data는 WMI 라이브러리를 사용해 받아오고, Network Data는 lphapi 라이브러리를 사용해 받아온다.
+
 
 ## Environment
-기본적으로 윈도우 10, Visual Studio 2008, c++ 환경에서 개발했다.  
+기본적으로 윈도우 10, Visual Studio 2015, c++ 환경에서 개발했다. 
+GUI는 MFC를 통해 구현했으며, Resource Data는 WMI를 사용해 개발했다.
 실행 환경은 윈도우 10 으로 상정하였으나, 딱히 환경에 제약이 있을 것 같지는 않다.
 
 ## Files
@@ -39,26 +40,22 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
     * ResourceMonitorDoc :  
     도큐먼트 클래스.
     * MainFrm :  
-    메인 프레임 클래스.  
-    * NetworkPerformanceItem:  
-    네트워크 데이터 item.
-    * NetworkPerformanceItem:  
-    네트워크 데이터 가져오는 부분.
+    메인 프레임 클래스.
 * Logger Files :  
 로그 기능을 구현한 파일들.
 
 ## Usage
 단순히 exe파일을 실행시키면 된다. 
 Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(threshold) 를 설정할 수 있다.  
-Disk 뷰의 프레임을 더블클릭해 콤보박스 컨트롤을 사용할 수 있다. 콤보박스 안에서 파티션을 선택해 용량을 확인할 수 있다.
+
 실행화면  
-![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.1.2.PNG?raw=true)
-![콤보박스](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.2.0.PNG?raw=true)
+![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.3.0.PNG?raw=true)
+
 ## Precautions
 현재 2008 버전만 업데이트 중. 2015버전은 잠정 중단.  
 * * *  
 
 
-2021-11-12 v1.1.0 (제목목록.목록.내용)
+2021-12-03 v1.0.1 (제목목록.목록.내용)
 
 
