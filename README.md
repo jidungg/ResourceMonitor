@@ -2,13 +2,13 @@
 
 ## Description
 회사 팀에서 시스템 자원 모니터링이 필요한데 윈도우 기본 프로그램인 작업관리자, 리소스모니터 등에는 로그를 남기는 기능이 없었기 때문에 자체적으로 제작하게 되었다.
-따라서 이 프로그램은 기존 윈도우 기본 프로그램 리소스모니터 에서 로그 기능을 추가한 형태가 될 것이다.
+따라서 이 프로그램은 기존 윈도우 기본 프로그램 리소스모니터 에서 로그 기능을 추가한 형태가 될 것이다.  
 
 
 ## Environment
-기본적으로 윈도우 10, Visual Studio 2015, c++ 환경에서 개발했다. 
-GUI는 MFC를 통해 구현했으며, Resource Data는 WMI를 사용해 개발했다.
-실행 환경은 윈도우 10 으로 상정하였으나, 딱히 환경에 제약이 있을 것 같지는 않다.
+기본적으로 윈도우 10, Visual Studio 2015/2008,  c++ 환경에서 개발했다. (2021-12-08기준 2008에서만 개발중, 2015는 중단)  
+GUI는 MFC를 통해 구현했으며, Resource Data는 WMI를 사용해 개발했다.  
+실행 환경은 윈도우 10 으로 상정하였음.
 
 ## Files
 * View Files :  
@@ -46,16 +46,21 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
 
 ## Usage
 단순히 exe파일을 실행시키면 된다. 
+CPU, Memory, Disk, Network 정보를 보여주고, 로그를 디스크에 기록한다.
+현재(2021-12-08 기준) Disk, Network의 프로세스 별 사용량은 정확하지 않으므로 무시해야한다.
 Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(threshold) 를 설정할 수 있다.  
+설정한 로그 주기(ms)마다 [D:\Performance_data_Log\{날짜}] 경로에 기록한다. 
+설정한 로그 출력 조건에 따라 설정 값 이상의 데이터만 로그로 남긴다.
 
 실행화면  
-![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.3.0.PNG?raw=true)
+![실행화면](https://github.com/jidungg/ResourceMonitor/blob/master/img/v2.0.0.PNG?raw=true)
+![로그설정](https://github.com/jidungg/ResourceMonitor/blob/master/img/v1.2.0.PNG?raw=true)
 
 ## Precautions
 현재 2008 버전만 업데이트 중. 2015버전은 잠정 중단.  
 * * *  
 
 
-2021-12-03 v1.0.1 (제목목록.목록.내용)
+2021-12-03 v1.0.2 (제목목록.목록.내용)
 
 

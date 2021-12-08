@@ -29,6 +29,9 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 	info.propertyNames.push_back(L"PercentProcessorTime");
 	info.propertyNames.push_back(L"IOReadBytesPersec");
 	info.propertyNames.push_back(L"IOWriteBytesPersec");
+	info.propertyNames.push_back(L"PrivateBytes");
+	info.propertyNames.push_back(L"WorkingSetPrivate");
+
 	info.idIndex = 0;
 	info.isUnique = false;
 	m_win32PerfFormatProc = new CPerfDataPerProcess();

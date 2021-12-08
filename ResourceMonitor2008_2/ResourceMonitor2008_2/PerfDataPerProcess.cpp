@@ -6,7 +6,6 @@
 CPerfDataPerProcess::CPerfDataPerProcess()
 {
 	nCores = GetNumberOfCores();
-
 }
 
 
@@ -44,6 +43,12 @@ void CPerfDataPerProcess::SetDataObj(int index)
 	case PROCESS_IOWRITE_INDEX:
 		procDataObj->ioWrite = propertyVal.bstrVal;
 		break;
+	case PROCESS_VIRTUAL_INDEX:
+		procDataObj->virtualBytes = propertyVal.bstrVal;
+		break;
+	case PROCESS_PRIVATE_INDEX:
+		procDataObj->privateBytes = propertyVal.bstrVal;
+		break;
 	default:
 		break;
 	}
@@ -64,8 +69,30 @@ void CPerfDataPerProcess::SetTableInstance()
 	usingPercent = (usingPercent / nCores);
 	procDataObj->usageRate.Format(_T("%.02f"), usingPercent);
 
+	if((*m_table).find(ID) == (*m_table).end())
+	{
+		procDataObj->meanUsageRate.Format(_T("%.02f"), usingPercent);
+	}else
+	{
+		double meanPercent;
+		if (procDataObj->name.Compare(_T("Idle")) != 0)
+		{
+			meanPercent = CumulativeAverage((*m_table)[ID].averageLength, (*m_table)[ID].prevAvg, usingPercent);
+			procDataObj->meanUsageRate.Format(_T("%.02f"), meanPercent);
+			procDataObj->averageLength= (*m_table)[ID].averageLength;
+			procDataObj->prevAvg = meanPercent;
+		}else
+		{
+			procDataObj->prevAvg = (*m_table)[ID].prevAvg;
+		}
+		
+
+	}
+
+	
 	//update Table
 	(*m_table)[ID] = *procDataObj;
+
 }
 
 void CPerfDataPerProcess::ArrangeTable()
@@ -131,3 +158,20 @@ int CPerfDataPerProcess::GetNumberOfCores()
 	return numOfCores;
 }
 
+double CPerfDataPerProcess::CumulativeAverage (int &length, double prevAvg, double newNumber) {
+	if(length == 1)
+	{
+		length++;
+		return newNumber;
+	}
+
+	double oldWeight = (length - 1) / (double)length;
+	double newWeight = 1 / (double)length;
+	double res = (prevAvg * oldWeight) + (newNumber * newWeight);
+	if(length < 60)
+	{
+		length++;
+	}
+
+	return res;
+}

@@ -41,7 +41,6 @@ void CPerfData::Init(const PerfDataInfo& info, CResourceMonitorDoc* doc)
 	m_nProps = info.propertyNames.size();
 
 	m_idIndex = info.idIndex;
-	isUnique = info.isUnique;
 	m_pDoc = doc;
 
 	if (FAILED(hr = CoInitializeEx(NULL, COINIT_MULTITHREADED)))

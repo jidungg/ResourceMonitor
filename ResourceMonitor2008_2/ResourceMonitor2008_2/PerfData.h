@@ -43,7 +43,7 @@ protected:
 	size_t					m_nProps;
 	int						m_idIndex;
 	long                    lID;
-	bool					isUnique;
+
 	DWORD                   dwNumObjects;//사실상 쓸모 없음
 
 	HRESULT					hr;

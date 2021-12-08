@@ -20,7 +20,9 @@ CMemMonitorView::CMemMonitorView()
 	m_frameCaptions.push_back(_T("Total Memory(MB):"));
 	m_frameCaptions.push_back(_T("Using Memory(MB):"));
 
-	m_tableCaptions.push_back(_T("Usage(KB)"));
+	m_tableCaptions.push_back(_T("Private(KB)"));
+	m_tableCaptions.push_back(_T("WorkingSet(KB)"));
+	m_tableCaptions.push_back(_T("Virtual(KB)"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
 	m_frameWidth = FRAME_WIDTH;
@@ -63,8 +65,14 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 		CString name;
 		name = iter->second.name;
 		CString workingSet;
-		ULONGLONG a = _wtoi64(iter->second.workingSet) / 1024;
-		workingSet.Format(_T("%llu"), a);
+		ULONGLONG iworkingSet = _wtoi64(iter->second.workingSet) / 1024;
+		workingSet.Format(_T("%llu"), iworkingSet);
+		CString virtualBytes;
+		ULONGLONG ivirtualBytes = _wtoi64(iter->second.virtualBytes) / 1024;
+		virtualBytes.Format(_T("%llu"), ivirtualBytes);
+		CString privateBytes;
+		ULONGLONG iprivateBytes = _wtoi64(iter->second.privateBytes) / 1024;
+		privateBytes.Format(_T("%llu"), iprivateBytes);
 
 		LVFINDINFO info;
 		int nIndex;
@@ -78,17 +86,22 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 			m_processList.InsertItem(0, id);
 
 			m_processList.SetItemText(0, 1, name);
-			m_processList.SetItemText(0, 2, workingSet);
+			m_processList.SetItemText(0, 2, virtualBytes);
+			m_processList.SetItemText(0, 3, workingSet);
+			m_processList.SetItemText(0, 4, privateBytes);
 		}
 		else
 		{
 			m_processList.SetItemText(nIndex, 1, name);
-			m_processList.SetItemText(nIndex, 2, workingSet);
+			m_processList.SetItemText(nIndex, 2, virtualBytes);
+			m_processList.SetItemText(nIndex, 3, workingSet);
+			m_processList.SetItemText(nIndex, 4, privateBytes);
 		}
 		id.Empty();
 		name.Empty();
 		workingSet.Empty();
-
+		virtualBytes.Empty();
+		privateBytes.Empty();
 	}
 
 	for (map<ULONGLONG, OSDataObj>::iterator iter = osTable->begin(); iter != osTable->end(); iter++)

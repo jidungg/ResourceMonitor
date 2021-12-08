@@ -7,6 +7,8 @@
 #define PROCESS_USEAGERATE_INDEX 3
 #define PROCESS_IOREAD_INDEX 4
 #define PROCESS_IOWRITE_INDEX 5
+#define PROCESS_VIRTUAL_INDEX 6
+#define PROCESS_PRIVATE_INDEX 7
 
 struct PerProcessDataObj : public DataObj
 {
@@ -15,6 +17,16 @@ struct PerProcessDataObj : public DataObj
 	CString usageRate;
 	CString ioRead;
 	CString ioWrite;
+	CString virtualBytes;
+	CString privateBytes;
+	CString meanUsageRate;
+	int averageLength;
+	double prevAvg;
+	PerProcessDataObj()
+	{
+		averageLength = 1;
+		prevAvg = 0;
+	}
 	virtual void Clear()
 	{
 		name.Empty();
@@ -22,6 +34,9 @@ struct PerProcessDataObj : public DataObj
 		usageRate.Empty();
 		ioRead.Empty();
 		ioWrite.Empty();
+		virtualBytes.Empty();
+		privateBytes.Empty();
+		meanUsageRate.Empty();
 	}
 };
 
@@ -32,7 +47,9 @@ public:
 	~CPerfDataPerProcess();
 
 	int nCores;
+
 	int GetNumberOfCores();
+	double CumulativeAverage (int &length, double prevAvg, double newNumber);
 	double idlePercent;
 	double usingPercent;
 	vector<ULONGLONG> exitedProcIDs;

@@ -1,5 +1,5 @@
 #pragma once
-#define VERSION "v1.3.0" //21-12-03 Disk 파티션 콤보박스 삭제
+#define VERSION "v2.0.0" //21-12-08 CPU 평균, Memory Virtual, Private 추가
 
 #define FRAME_WIDTH 55
 #define FRAME_WIDTH_ITEM 30

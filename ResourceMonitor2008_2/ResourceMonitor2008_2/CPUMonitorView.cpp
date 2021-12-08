@@ -16,7 +16,8 @@ CCPUMonitorView::CCPUMonitorView()
 	m_title = _T("CPU");
 	m_frameCaptions.push_back(_T("Usage rate"));
 
-	m_tableCaptions.push_back(_T("Usage rate"));
+	m_tableCaptions.push_back(_T("Average"));
+	m_tableCaptions.push_back(_T("Usage"));
 	m_tableCaptions.push_back(_T("Name"));
 	m_tableCaptions.push_back(_T("PID"));
 	m_frameWidth = FRAME_WIDTH;
@@ -60,6 +61,8 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 		name = iter->second.name;
 		CString percent;
 		percent = iter->second.usageRate;
+		CString meanPercent;
+		meanPercent = iter->second.meanUsageRate;
 		
 		if (id.Compare(_T("0")) == 0 )
 		{
@@ -68,7 +71,6 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 				m_farmeList.InsertItem(0, _T(" "));
 			}
 			m_farmeList.SetItemText(0, 1, percent);
-
 		}
 
 		LVFINDINFO info;
@@ -83,11 +85,13 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 			m_processList.SetItemText(0, 1, name);
 			m_processList.SetItemText(0, 2, percent);
+			m_processList.SetItemText(0, 3, meanPercent);
 		}
 		else
 		{
 			m_processList.SetItemText(nIndex, 1, name);
 			m_processList.SetItemText(nIndex, 2, percent);
+			m_processList.SetItemText(nIndex, 3, meanPercent);
 		}
 		id.Empty();
 		name.Empty();
