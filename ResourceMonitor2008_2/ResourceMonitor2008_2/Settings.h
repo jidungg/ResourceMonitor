@@ -1,10 +1,10 @@
 #pragma once
-#define VERSION "v2.0.0" //21-12-08 CPU 평균, Memory Virtual, Private 추가
+#define VERSION "v2.1.0" //21-12-27 PerfDataOSProcessor 클래스 추가. Window7 프로세스 종료문제 해결
 
 #define FRAME_WIDTH 55
 #define FRAME_WIDTH_ITEM 30
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL 500
 #define LOG_INTERVAL 1000
 
 #define LOG_CPU_THRESHOLD 10.0f

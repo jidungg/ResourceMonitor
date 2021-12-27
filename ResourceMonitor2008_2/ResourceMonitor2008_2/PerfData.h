@@ -59,7 +59,7 @@ protected:
 	vector<CString>			propertyNames;
 
 	VARIANT					propertyVal;
-	ULONGLONG				ID;
+	int						ID;
 
 	virtual void SetDataObj(int index) abstract;
 	virtual void SetTableInstance() abstract;

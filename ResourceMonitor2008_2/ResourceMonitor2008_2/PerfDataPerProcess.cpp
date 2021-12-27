@@ -5,7 +5,8 @@
 
 CPerfDataPerProcess::CPerfDataPerProcess()
 {
-	nCores = GetNumberOfCores();
+	_iCoreCount = GetNumberOfCores();
+	_iCPUThreadCount = GetNumberOfCPUThreads();
 }
 
 
@@ -66,7 +67,7 @@ void CPerfDataPerProcess::SetTableInstance()
 	{
 		usingPercent = abs(_wtoi64(procDataObj->usageRate) - idlePercent);
 	}
-	usingPercent = (usingPercent / nCores);
+	usingPercent = (usingPercent / _iCPUThreadCount);//_iCPUThreadCount
 	procDataObj->usageRate.Format(_T("%.02f"), usingPercent);
 
 	if((*m_table).find(ID) == (*m_table).end())
@@ -155,9 +156,15 @@ int CPerfDataPerProcess::GetNumberOfCores()
 	delete[] pProcessorInformations;
 	pProcessorInformations = NULL;
 
+
 	return numOfCores;
 }
-
+int CPerfDataPerProcess::GetNumberOfCPUThreads()
+{
+	SYSTEM_INFO stSysInfo;
+	GetSystemInfo(&stSysInfo);
+	return stSysInfo.dwNumberOfProcessors;
+}
 double CPerfDataPerProcess::CumulativeAverage (int &length, double prevAvg, double newNumber) {
 	if(length == 1)
 	{

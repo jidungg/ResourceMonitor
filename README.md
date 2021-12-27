@@ -33,6 +33,8 @@ WMI를 사용해 성능 데이터를 가져오는 파일들.
     프로세스 성능 데이터 클래스.
     * PerfDataOS
     운영체제 성능 데이터 클래스.
+    * PerfDataOSProcessor  
+    운영체제 성능 데이터 클래스. CPU 총 사용량.
 * Basic Files :  
 기본 파일
     * ResourceMonitor:  
@@ -61,6 +63,6 @@ Log 메뉴를 통해 로그 출력 주기(Interval), 로그 출력 조건(thresh
 * * *  
 
 
-2021-12-08 v1.0.3 (제목목록.목록.내용)
+2021-12-27 v1.1.0 (제목목록.목록.내용)
 
 

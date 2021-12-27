@@ -46,9 +46,12 @@ public:
 	CPerfDataPerProcess();
 	~CPerfDataPerProcess();
 
-	int nCores;
+	int _iCoreCount;
+	int _iCPUThreadCount;
 
 	int GetNumberOfCores();
+	int GetNumberOfCPUThreads();
+
 	double CumulativeAverage (int &length, double prevAvg, double newNumber);
 	double idlePercent;
 	double usingPercent;

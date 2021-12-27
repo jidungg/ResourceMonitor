@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PerfDataOSProcessor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PerfDataPerProcess.cpp"
 				>
 			</File>
@@ -346,6 +350,10 @@
 			</File>
 			<File
 				RelativePath=".\PerfDataOS.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PerfDataOSProcessor.h"
 				>
 			</File>
 			<File

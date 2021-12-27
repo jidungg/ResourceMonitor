@@ -51,8 +51,11 @@ void CCPUMonitorView::OnInitialUpdate()
 void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
+	CPerfDataOSProcessor *pefDataOSProc = dataManager->m_win32OSProcessor;		//PerfDataOSProcessor 클래스 사용 안할 시 주석
 
 	map<ULONGLONG, PerProcessDataObj>	*table = perfData->m_table;
+	map<ULONGLONG, OSProcessorDataObj>	*tableOSProc = pefDataOSProc->m_table;		//PerfDataOSProcessor 클래스 사용 안할 시 주석
+
 	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = table->begin(); iter != table->end();iter++)
 	{
 		CString id;
@@ -64,14 +67,15 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 		CString meanPercent;
 		meanPercent = iter->second.meanUsageRate;
 		
-		if (id.Compare(_T("0")) == 0 )
-		{
-			if (m_farmeList.GetItemCount() == 0)
-			{
-				m_farmeList.InsertItem(0, _T(" "));
-			}
-			m_farmeList.SetItemText(0, 1, percent);
-		}
+		//PerfDataOSProcessor 클래스 사용 안할 시 주석해제
+		//if (id.Compare(_T("0")) == 0 )
+		//{
+		//	if (m_farmeList.GetItemCount() == 0)
+		//	{
+		//		m_farmeList.InsertItem(0, _T(" "));
+		//	}
+		//	m_farmeList.SetItemText(0, 1, percent);
+		//}
 
 		LVFINDINFO info;
 		int nIndex;
@@ -96,6 +100,24 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 		id.Empty();
 		name.Empty();
 		percent.Empty();
+
+	}
+
+	//PerfDataOSProcessor 클래스 사용 안할 시 주석
+	for (map<ULONGLONG, OSProcessorDataObj>::iterator iter = tableOSProc->begin(); iter != tableOSProc->end();iter++)
+	{
+		CString total;
+		total = iter->second.cpuTotal;
+		CString id;
+		id = iter->second.name;
+		if(id.Compare(_T("_Total")) == 0)
+		{
+			if (m_farmeList.GetItemCount() == 0)
+			{
+				m_farmeList.InsertItem(0, _T(" "));
+			}
+			m_farmeList.SetItemText(0, 1, total);
+		}
 
 	}
 
