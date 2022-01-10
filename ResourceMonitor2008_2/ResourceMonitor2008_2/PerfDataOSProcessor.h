@@ -22,7 +22,7 @@ public:
 	~CPerfDataOSProcessor(void);
 	
 	OSProcessorDataObj dataObjOS;
-	map<ULONGLONG, OSProcessorDataObj>	*m_table;
+	map<ULONG, OSProcessorDataObj>	*m_table;
 
 	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
 	virtual void SetDataObj(int index);

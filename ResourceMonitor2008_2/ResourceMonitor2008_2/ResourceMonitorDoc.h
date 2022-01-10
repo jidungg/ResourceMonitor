@@ -9,7 +9,9 @@
 using namespace std;
 
 class CPerfDataManager;
+class CResourceMonitorView;
 static CLogger sLogger;
+
 
 class CResourceMonitorDoc : public CDocument
 {
@@ -21,6 +23,11 @@ public:
 	CWinThread* m_updaterThread;
 	CWinThread* m_loggerThread;
 	CPerfDataManager* m_perfDataManager;
+	CResourceMonitorView* m_pView1;
+	CResourceMonitorView* m_pView2;
+	CResourceMonitorView* m_pView3;
+	CResourceMonitorView* m_pView4;
+
 	int m_logInterval ;
 	float m_cpuThreshold ;
 	int m_memThreshold;
@@ -31,7 +38,10 @@ public:
 
 	// Thread 종료 함수
 	void ExitThread(); 
-	void AtExitProcess(std::vector<ULONGLONG>* exitedProcIDs);
+
+	void AtExitProcess(std::vector<ULONG>* exitedProcIDs);
+	void AtNetworkOut(std::vector<ULONG>*);
+	void AtDiskOut(std::vector<ULONG>*);
 
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);

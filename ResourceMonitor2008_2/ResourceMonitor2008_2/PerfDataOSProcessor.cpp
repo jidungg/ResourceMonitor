@@ -11,7 +11,7 @@ CPerfDataOSProcessor::~CPerfDataOSProcessor(void)
 
 void CPerfDataOSProcessor::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
 {
-	m_table = new map<ULONGLONG, OSProcessorDataObj>;
+	m_table = new map<ULONG, OSProcessorDataObj>;
 	dataObj = new OSProcessorDataObj;
 	CPerfData::Init(info,doc);
 }

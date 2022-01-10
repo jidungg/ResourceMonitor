@@ -53,10 +53,10 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
 	CPerfDataOSProcessor *pefDataOSProc = dataManager->m_win32OSProcessor;		//PerfDataOSProcessor 클래스 사용 안할 시 주석
 
-	map<ULONGLONG, PerProcessDataObj>	*table = perfData->m_table;
-	map<ULONGLONG, OSProcessorDataObj>	*tableOSProc = pefDataOSProc->m_table;		//PerfDataOSProcessor 클래스 사용 안할 시 주석
+	map<ULONG, PerProcessDataObj>	*table = perfData->m_table;
+	map<ULONG, OSProcessorDataObj>	*tableOSProc = pefDataOSProc->m_table;		//PerfDataOSProcessor 클래스 사용 안할 시 주석
 
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = table->begin(); iter != table->end();iter++)
+	for (map<ULONG, PerProcessDataObj>::iterator iter = table->begin(); iter != table->end();iter++)
 	{
 		CString id;
 		id.Format(_T("%lu"), iter->first);
@@ -104,7 +104,7 @@ void CCPUMonitorView::UpdateView(CPerfDataManager * dataManager)
 	}
 
 	//PerfDataOSProcessor 클래스 사용 안할 시 주석
-	for (map<ULONGLONG, OSProcessorDataObj>::iterator iter = tableOSProc->begin(); iter != tableOSProc->end();iter++)
+	for (map<ULONG, OSProcessorDataObj>::iterator iter = tableOSProc->begin(); iter != tableOSProc->end();iter++)
 	{
 		CString total;
 		total = iter->second.cpuTotal;

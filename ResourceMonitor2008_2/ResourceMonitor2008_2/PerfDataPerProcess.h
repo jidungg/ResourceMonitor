@@ -55,8 +55,8 @@ public:
 	double CumulativeAverage (int &length, double prevAvg, double newNumber);
 	double idlePercent;
 	double usingPercent;
-	vector<ULONGLONG> exitedProcIDs;
-	map<ULONGLONG, PerProcessDataObj>	*m_table;
+	vector<ULONG> exitedProcIDs;
+	map<ULONG, PerProcessDataObj>	*m_table;
 
 	virtual void Init(const PerfDataInfo& info, CResourceMonitorDoc* doc);
 	virtual void SetDataObj(int index);

@@ -14,6 +14,7 @@
 #include "PerfDataManager.h"
 #include "DlgSetLogInterval.h"
 #include "DlgSetLogThreshold.h"
+#include "Etw.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -165,6 +166,7 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 			delete dm->m_win32OperatingSystem->m_table;
 			delete dm->m_win32OperatingSystem->dataObj;
 	
+			dm->m_etw->CleanUp();
 
 			// thread Á¾·á
 			d->ExitThread();

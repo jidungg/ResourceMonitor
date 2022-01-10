@@ -45,7 +45,7 @@ public:
 	CResourceMonitorDoc* GetDocument() const;
 
 	void InitTable();
-	void RemoveProcessFromList(std::vector<ULONGLONG>* exitedProcIDs);
+	void RemoveProcessFromList(std::vector<ULONG>* exitedProcIDs);
 		
 	virtual void InitFrame();
 	virtual void UpdateView(CPerfDataManager* dataManager) abstract;

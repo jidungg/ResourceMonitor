@@ -16,7 +16,7 @@ CPerfDataPerProcess::~CPerfDataPerProcess()
 
 void CPerfDataPerProcess::Init(const PerfDataInfo & info, CResourceMonitorDoc * doc)
 {
-	m_table = new map<ULONGLONG, PerProcessDataObj>;
+	m_table = new map<ULONG, PerProcessDataObj>;
 	dataObj = new PerProcessDataObj;
 	CPerfData::Init(info, doc);
 }
@@ -99,7 +99,7 @@ void CPerfDataPerProcess::SetTableInstance()
 void CPerfDataPerProcess::ArrangeTable()
 {
 	//false를 찾고
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = m_table->begin(); iter != m_table->end(); iter++)
+	for (map<ULONG, PerProcessDataObj>::iterator iter = m_table->begin(); iter != m_table->end(); iter++)
 	{
 		if (iter->second.flag == false)
 		{
@@ -107,7 +107,7 @@ void CPerfDataPerProcess::ArrangeTable()
 		}
 	}
 	//false인애 없애주고 
-	for (vector<ULONGLONG>::iterator iter = exitedProcIDs.begin(); iter != exitedProcIDs.end(); iter++)
+	for (vector<ULONG>::iterator iter = exitedProcIDs.begin(); iter != exitedProcIDs.end(); iter++)
 	{
 		m_table->erase(*iter);
 	}
@@ -117,12 +117,12 @@ void CPerfDataPerProcess::ArrangeTable()
 	}
 
 	//table에 다 false로 바꿔
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = m_table->begin(); iter != m_table->end(); iter++)
+	for (map<ULONG, PerProcessDataObj>::iterator iter = m_table->begin(); iter != m_table->end(); iter++)
 	{
 		iter->second.flag = false;
 	}
 	exitedProcIDs.clear();
-	vector<ULONGLONG>().swap(exitedProcIDs);
+	vector<ULONG>().swap(exitedProcIDs);
 
 }
 int CPerfDataPerProcess::GetNumberOfCores()

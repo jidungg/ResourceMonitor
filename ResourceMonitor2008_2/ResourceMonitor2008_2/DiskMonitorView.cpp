@@ -7,6 +7,7 @@
 #include "ResourceMonitorDoc.h"
 #include "PerfDataManager.h"
 #include "PerfDataLogicalDisk.h"
+#include "Etw.h"
 
 // CDiskMonitorView
 using namespace std;
@@ -67,19 +68,19 @@ void CDiskMonitorView::OnSize(UINT nType, int cx, int cy)
 void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
 
-	map<ULONGLONG, PerProcessDataObj>	*perfTable =dataManager->m_win32PerfFormatProc->m_table;
+	map<ULONG, ProcessDiskData>	*perfTable = &dataManager->m_etw->diskMap;
 	map<CString, LogicalDiskDataObj>	*diskTable =dataManager->m_win32DiskDrive->m_table;
 
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = perfTable->begin(); iter != perfTable->end(); iter++)
+	for (map<ULONG, ProcessDiskData>::iterator iter = perfTable->begin(); iter != perfTable->end(); iter++)
 	{
 		CString id;
 		id.Format(_T("%lu"), iter->first);
-		CString name;
-		name = iter->second.name;
+		//CString name;
+		//name = iter->second.name;
 		CString ioRead;
-		ioRead = iter->second.ioRead;
+		ioRead.Format(_T("%lu"),iter->second.readBtyes);
 		CString ioWrite;
-		ioWrite = iter->second.ioWrite;
+		ioWrite.Format(_T("%lu"), iter->second.writeBytes) ;
 
 		LVFINDINFO info;
 		int nIndex;
@@ -90,37 +91,29 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 		{
 			m_processList.InsertItem(0, id);
 
-			m_processList.SetItemText(0, 1, name);
+			//m_processList.SetItemText(0, 1, name);
 			m_processList.SetItemText(0, 2, ioRead);
 			m_processList.SetItemText(0, 3, ioWrite);
 		}
 		else
 		{
-			m_processList.SetItemText(nIndex, 1, name);
+			//m_processList.SetItemText(nIndex, 1, name);
 			m_processList.SetItemText(nIndex, 2, ioRead);
 			m_processList.SetItemText(nIndex, 3, ioWrite);
 		}
 		id.Empty();
-		name.Empty();
+		//name.Empty();
 		ioRead.Empty();
 		ioWrite.Empty();
 	}
-    //lstItems.AddTail(L"Item 1");  
-    //lstItems.AddTail(L"Item 2"); 
 
-	//m_farmeList.lstItems.RemoveAll();
 
 	for (map<CString, LogicalDiskDataObj>::iterator iter = diskTable->begin(); iter != diskTable->end(); iter++)
 	{
 		CString id;
 		id = iter->first;
 
-		//m_farmeList.lstItems.AddTail(id);
 
-		//if(id.Compare(m_farmeList.GetItemText(0,0)) != 0)
-		//{
-		//	continue;
-		//}
 		CString totalSpace;
 		ULONGLONG itotalSpace = _wtoi64(iter->second.size);
 		totalSpace.Format(_T("%llu"), itotalSpace/1024/1024);
@@ -130,18 +123,6 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 		usingSapce.Format(_T("%llu"), iusingSpace/1024/1024);
 
 
-
-		//if (m_farmeList.GetItemCount() == 0)
-		//{
-		//	m_farmeList.InsertItem(0, id);
-		//	m_farmeList.SetItemText(0, 1, totalSpace);
-		//	m_farmeList.SetItemText(0, 2, usingSapce);
-		//}else
-		//{
-		//	m_farmeList.SetItemText(0, 0, id);
-		//	m_farmeList.SetItemText(0, 1, totalSpace);
-		//	m_farmeList.SetItemText(0, 2, usingSapce);
-		//}
 		LVFINDINFO info;
 		int nIndex;
 		info.flags = LVFI_STRING;

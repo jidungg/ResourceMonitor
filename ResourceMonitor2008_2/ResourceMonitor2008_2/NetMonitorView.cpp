@@ -6,6 +6,8 @@
 #include "NetMonitorView.h"
 #include "ResourceMonitorDoc.h"
 #include "PerfDataManager.h"
+#include "Etw.h"
+
 // CNetMonitorView
 
 IMPLEMENT_DYNCREATE(CNetMonitorView, CResourceMonitorView)
@@ -49,15 +51,19 @@ void CNetMonitorView::OnInitialUpdate()
 }
 void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 {
-	CPerfDataPerProcess *perfData = dataManager->m_win32PerfFormatProc;
 
-	map<ULONGLONG, PerProcessDataObj>	*table = perfData->m_table;
-	for (map<ULONGLONG, PerProcessDataObj>::iterator iter = table->begin(); iter != table->end(); iter++)
+	map<ULONG, ProcessNetworkData>	*table = &dataManager->m_etw->networkMap;
+	for (map<ULONG, ProcessNetworkData>::iterator iter = table->begin(); iter != table->end(); iter++)
 	{
 		CString id;
 		id.Format(_T("%lu"), iter->first);
-		CString name;
-		name = iter->second.name;
+		//CString name;
+		//name = iter->second.name;
+		CString ioReceive;
+		ioReceive.Format(_T("%lu"),iter->second.receiveBytes);
+		CString ioSend;
+		ioSend.Format(_T("%lu"), iter->second.sendBytes) ;
+
 		LVFINDINFO info;
 		int nIndex;
 		info.flags = LVFI_STRING;
@@ -66,16 +72,28 @@ void CNetMonitorView::UpdateView(CPerfDataManager * dataManager)
 		{
 			m_processList.InsertItem(0, id);
 
-			m_processList.SetItemText(0, 1, name);
+			//m_processList.SetItemText(0, 1, name);
+			m_processList.SetItemText(0, 2, ioSend);
+			m_processList.SetItemText(0, 3, ioReceive);
 
 		}
 		else
 		{
-			m_processList.SetItemText(nIndex, 1, name);
+			//m_processList.SetItemText(nIndex, 1, name);
+			m_processList.SetItemText(nIndex, 2, ioSend);
+			m_processList.SetItemText(nIndex, 3, ioReceive);
 		}
 		id.Empty();
-		name.Empty();
+		//name.Empty();
+
+	}	
+	CString totalIO;
+	totalIO.Format(_T("%lu"),dataManager->m_etw->m_totalIO/1024);
+	if(m_farmeList.GetItemCount() == 0)
+	{
+		m_farmeList.InsertItem(0,_T(""));
 	}
+	m_farmeList.SetItemText(0,1,totalIO);
 
 }
 void CNetMonitorView::AddPeriodicLog()

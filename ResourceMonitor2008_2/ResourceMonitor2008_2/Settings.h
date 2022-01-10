@@ -4,7 +4,7 @@
 #define FRAME_WIDTH 55
 #define FRAME_WIDTH_ITEM 30
 
-#define UPDATE_INTERVAL 500
+#define UPDATE_INTERVAL 1000
 #define LOG_INTERVAL 1000
 
 #define LOG_CPU_THRESHOLD 10.0f
@@ -12,3 +12,5 @@
 #define LOG_DIRECTORY _T("D:\\Performance_data_Log")
 
 #define LOG_TOP_N 10
+
+#define AVG_CALC_COUNT 60

@@ -77,15 +77,15 @@ void CResourceMonitorView::InitFrame()
 	m_bInit = true;
 }
 
-void CResourceMonitorView::RemoveProcessFromList(vector<ULONGLONG>* exitedProcIDs)
+void CResourceMonitorView::RemoveProcessFromList(vector<ULONG>* exitedProcIDs)
 {
-	for (vector<ULONGLONG>::iterator iter = exitedProcIDs->begin(); iter != exitedProcIDs->end(); iter++)
+	for (vector<ULONG>::iterator iter = exitedProcIDs->begin(); iter != exitedProcIDs->end(); iter++)
 	{
 		LVFINDINFO info;
 		int nIndex;
 		info.flags = LVFI_STRING;
 		CString str;
-		str.Format(_T("%llu"), *iter);
+		str.Format(_T("%lu"), *iter);
 		info.psz = str;
 
 		if ((nIndex = m_processList.FindItem(&info)) != -1)

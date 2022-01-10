@@ -69,6 +69,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				UACExecutionLevel="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -191,15 +192,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AdvComboBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\AdvListCtrl.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CPUMonitorView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DiskMonitorView.cpp"
+				RelativePath=".\AdvListCtrl.h"
 				>
 			</File>
 			<File
@@ -207,7 +208,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DlgSetLogInterval.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DlgSetLogThreshold.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DlgSetLogThreshold.h"
 				>
 			</File>
 			<File
@@ -215,7 +224,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Logger.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Logger_Base.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Logger_Base.h"
 				>
 			</File>
 			<File
@@ -223,35 +240,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MemMonitorView.cpp"
+				RelativePath=".\MainFrm.h"
 				>
 			</File>
 			<File
-				RelativePath=".\NetMonitorView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataLogicalDisk.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataOS.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataOSProcessor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataPerProcess.cpp"
+				RelativePath=".\Resource.h"
 				>
 			</File>
 			<File
@@ -259,11 +252,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ResourceMonitor2008_2.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ResourceMonitorDoc.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ResourceMonitorView.cpp"
+				RelativePath=".\ResourceMonitorDoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Settings.h"
 				>
 			</File>
 			<File
@@ -286,100 +287,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-		</Filter>
-		<Filter
-			Name="헤더 파일"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\AdvComboBox.h"
-				>
-			</File>
-			<File
-				RelativePath=".\AdvListCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPUMonitorView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DiskMonitorView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DlgSetLogInterval.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DlgSetLogThreshold.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger_Base.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MainFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MemMonitorView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NetMonitorView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataLogicalDisk.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataOS.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataOSProcessor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PerfDataPerProcess.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ResourceMonitor2008_2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ResourceMonitorDoc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ResourceMonitorView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Settings.h"
-				>
-			</File>
 			<File
 				RelativePath=".\stdafx.h"
 				>
@@ -388,6 +295,118 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
+			<Filter
+				Name="View"
+				>
+				<File
+					RelativePath=".\CPUMonitorView.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CPUMonitorView.h"
+					>
+				</File>
+				<File
+					RelativePath=".\DiskMonitorView.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\DiskMonitorView.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MemMonitorView.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MemMonitorView.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NetMonitorView.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NetMonitorView.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ResourceMonitorView.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ResourceMonitorView.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="PerfData"
+				>
+				<File
+					RelativePath=".\PerfDataManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PerfDataManager.h"
+					>
+				</File>
+				<Filter
+					Name="ETW"
+					>
+					<File
+						RelativePath=".\Etw.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Etw.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="WMI"
+					>
+					<File
+						RelativePath=".\PerfData.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataLogicalDisk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataLogicalDisk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataOS.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataOS.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataOSProcessor.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataOSProcessor.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataPerProcess.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfDataPerProcess.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="리소스 파일"

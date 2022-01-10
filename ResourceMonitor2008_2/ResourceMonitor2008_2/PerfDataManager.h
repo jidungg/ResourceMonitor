@@ -5,6 +5,8 @@
 #include "PerfDataLogicalDisk.h"
 #include "PerfDataOSProcessor.h"
 
+class CEtw;
+
 class CPerfDataManager
 {
 public:
@@ -19,7 +21,7 @@ public:
 	CPerfDataPerProcess* m_win32PerfFormatProc;
 	CPerfDataOS* m_win32OperatingSystem;
 	CPerfDataOSProcessor* m_win32OSProcessor;
-
+	CEtw* m_etw;
 	//void UpdateData();
 	//void UpdatePerfProcData(DataObj& data);
 	//void UpdateDiskDriveData(DataObj& data);

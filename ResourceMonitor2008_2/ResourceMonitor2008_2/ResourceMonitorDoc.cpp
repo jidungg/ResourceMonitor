@@ -17,6 +17,7 @@
 #include "Logger.h"
 #include <propkey.h>
 #include <vector>
+#include "Etw.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,6 +39,7 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 	m_perfDataManager = new CPerfDataManager(this);
+
 	m_isExit= FALSE;
 	m_logInterval= LOG_INTERVAL;
 	m_cpuThreshold = LOG_CPU_THRESHOLD;
@@ -53,12 +55,6 @@ CResourceMonitorDoc::~CResourceMonitorDoc()
 UINT CResourceMonitorDoc::Update(LPVOID doc)
 {
 	CResourceMonitorDoc* pDoc = (CResourceMonitorDoc*)doc;
-	POSITION pos = pDoc->GetFirstViewPosition();
-	CResourceMonitorView* pView1 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView2 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView3 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView4 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CPerfDataManager *dataManager = pDoc->m_perfDataManager;
 
 	while (true)
 	{
@@ -67,15 +63,13 @@ UINT CResourceMonitorDoc::Update(LPVOID doc)
 			break;
 		}
 		{
-			dataManager->RefreshData();
+			pDoc->m_perfDataManager->RefreshData();
 
 		}
-
-
-		pView1->UpdateView(dataManager);
-		pView2->UpdateView(dataManager);
-		pView3->UpdateView(dataManager);
-		pView4->UpdateView(dataManager);
+		pDoc->m_pView1->UpdateView(pDoc->m_perfDataManager);
+		pDoc->m_pView2->UpdateView(pDoc->m_perfDataManager);
+		pDoc->m_pView3->UpdateView(pDoc->m_perfDataManager);
+		pDoc->m_pView4->UpdateView(pDoc->m_perfDataManager);
 
 		Sleep(UPDATE_INTERVAL);
 	}
@@ -87,41 +81,43 @@ UINT CResourceMonitorDoc::Update(LPVOID doc)
 
 UINT CResourceMonitorDoc::AddPeriodicLog(LPVOID doc)
 {
-	CResourceMonitorDoc * pDoc = (CResourceMonitorDoc *)doc;
-	POSITION pos = pDoc->GetFirstViewPosition();
-	CResourceMonitorView* pView1 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView2 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView3 = (CResourceMonitorView*)pDoc->GetNextView(pos);
-	CResourceMonitorView* pView4 = (CResourceMonitorView*)pDoc->GetNextView(pos);
+	CResourceMonitorDoc* pDoc = (CResourceMonitorDoc*)doc;
 	while (true)
 	{
 		if (pDoc->m_isExit == TRUE)
 		{
 			break;
 		}
-		pView1->AddPeriodicLog();
-		pView2->AddPeriodicLog();
-		pView3->AddPeriodicLog();
-		pView4->AddPeriodicLog();
+		pDoc->m_pView1->AddPeriodicLog();
+		pDoc->m_pView2->AddPeriodicLog();
+		pDoc->m_pView3->AddPeriodicLog();
+		pDoc->m_pView4->AddPeriodicLog();
 		Sleep(pDoc->m_logInterval);
 	}
 	TRACE("AddPeriodicLog Func Out!!\n");
 	return EXIT_CODE;
 }
 
-void CResourceMonitorDoc::AtExitProcess(vector<ULONGLONG>* exitedProcIDs)
+void CResourceMonitorDoc::AtExitProcess(vector<ULONG>* exitedProcIDs)
 {
-	if (this == NULL)return;
-	POSITION pos = this->GetFirstViewPosition();
-	CResourceMonitorView* pView1 = (CResourceMonitorView*)this->GetNextView(pos);
-	CResourceMonitorView* pView2 = (CResourceMonitorView*)this->GetNextView(pos);
-	CResourceMonitorView* pView3 = (CResourceMonitorView*)this->GetNextView(pos);
-	CResourceMonitorView* pView4 = (CResourceMonitorView*)this->GetNextView(pos);
-
-	pView1->RemoveProcessFromList(exitedProcIDs);
-	pView2->RemoveProcessFromList(exitedProcIDs);
-	pView3->RemoveProcessFromList(exitedProcIDs);
-	pView4->RemoveProcessFromList(exitedProcIDs);
+	m_pView1->RemoveProcessFromList(exitedProcIDs);
+	m_pView2->RemoveProcessFromList(exitedProcIDs);
+	m_pView3->RemoveProcessFromList(exitedProcIDs);
+	m_pView4->RemoveProcessFromList(exitedProcIDs);
+}
+void CResourceMonitorDoc::AtNetworkOut(vector<ULONG>* exitedProcIDs)
+{
+	//m_pView1->RemoveProcessFromList(exitedProcIDs);
+	//m_pView2->RemoveProcessFromList(exitedProcIDs);
+	//m_pView3->RemoveProcessFromList(exitedProcIDs);
+	m_pView4->RemoveProcessFromList(exitedProcIDs);
+}
+void CResourceMonitorDoc::AtDiskOut(vector<ULONG>* exitedProcIDs)
+{
+	//m_pView1->RemoveProcessFromList(exitedProcIDs);
+	//m_pView2->RemoveProcessFromList(exitedProcIDs);
+	m_pView3->RemoveProcessFromList(exitedProcIDs);
+	//m_pView4->RemoveProcessFromList(exitedProcIDs);
 }
 
 void CResourceMonitorDoc::ExitThread()
@@ -159,6 +155,13 @@ BOOL CResourceMonitorDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
+	if (this == NULL)return FALSE;
+	POSITION pos = this->GetFirstViewPosition();
+	m_pView1 = (CResourceMonitorView*)this->GetNextView(pos);
+	m_pView2 = (CResourceMonitorView*)this->GetNextView(pos);
+	m_pView3 = (CResourceMonitorView*)this->GetNextView(pos);
+	m_pView4 = (CResourceMonitorView*)this->GetNextView(pos);
+
 	m_perfDataManager->m_pDoc = this;
 
 
@@ -167,10 +170,13 @@ BOOL CResourceMonitorDoc::OnNewDocument()
 	m_updaterThread->m_bAutoDelete = FALSE;
 	m_updaterThread->ResumeThread();
 
+	m_perfDataManager->m_etw->SetUp();
+
 	m_loggerThread = AfxBeginThread(AddPeriodicLog, this, 0, 0, CREATE_SUSPENDED, 0);
 	m_loggerThread->m_bAutoDelete = FALSE;
 	m_loggerThread->ResumeThread();
 
+	
 	// TODO: 여기에 재초기화 코드를 추가합니다.
 	// SDI 문서는 이 문서를 다시 사용합니다.
 

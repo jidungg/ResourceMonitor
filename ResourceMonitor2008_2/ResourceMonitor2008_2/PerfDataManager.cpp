@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PerfDataManager.h"
-#include "PerfData.h"
+#include "Etw.h"
 #include <vector>
+
+
 using namespace std;
 
 CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
@@ -56,6 +58,8 @@ CPerfDataManager::CPerfDataManager(CResourceMonitorDoc* doc)
 	m_win32OSProcessor = new CPerfDataOSProcessor();
 	m_win32OSProcessor->Init(info, m_pDoc);
 
+
+	m_etw = new CEtw(m_pDoc);
 }
 
 
@@ -72,6 +76,9 @@ CPerfDataManager::~CPerfDataManager()
 
 	delete m_win32OSProcessor;
 	m_win32OSProcessor = NULL;
+	
+	delete m_etw;
+	m_etw = NULL;
 }
 
 void CPerfDataManager::RefreshData()
@@ -81,6 +88,7 @@ void CPerfDataManager::RefreshData()
 	m_win32OperatingSystem->GetData();
 	m_win32DiskDrive->GetData();
 	m_win32OSProcessor->GetData(); //CPerfDataOSProcessor클래스 사용 안할 시 주석
+	m_etw->Update();
 }
 
 
