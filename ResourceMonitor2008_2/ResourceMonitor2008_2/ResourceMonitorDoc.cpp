@@ -9,15 +9,14 @@
 #include "ResourceMonitor2008_2.h"
 #endif
 
-
-
-#include "ResourceMonitorView.h"
+#include "./View/ResourceMonitorView.h"
 #include "ResourceMonitorDoc.h"
-#include "PerfDataManager.h"
-#include "Logger.h"
+#include "./PerfData/PerfDataManager.h"
+#include "./Logger/Logger.h"
 #include <propkey.h>
 #include <vector>
-#include "Etw.h"
+#include "./PerfData/Etw/Etw.h"
+#include <time.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,6 +43,8 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 	m_logInterval= LOG_INTERVAL;
 	m_cpuThreshold = LOG_CPU_THRESHOLD;
 	m_memThreshold = LOG_MEM_THRESHOLD;
+	m_networkThreshold = LOG_NET_THRESHOLD;
+	m_diskThreshold = LOG_DISK_THRESHOLD;
 }
 
 CResourceMonitorDoc::~CResourceMonitorDoc()
@@ -52,52 +53,49 @@ CResourceMonitorDoc::~CResourceMonitorDoc()
 	m_perfDataManager = NULL;
 }
 
-UINT CResourceMonitorDoc::Update(LPVOID doc)
+
+UINT CResourceMonitorDoc::UpdateTimer(LPVOID doc)
 {
 	CResourceMonitorDoc* pDoc = (CResourceMonitorDoc*)doc;
-
-	while (true)
+	clock_t start, end;
+	int time;
+	while (pDoc->m_isExit == FALSE)
 	{
-		if (pDoc->m_isExit == TRUE)
-		{
-			break;
-		}
-		{
-			pDoc->m_perfDataManager->RefreshData();
 
-		}
+		start = clock();
+		pDoc->m_perfDataManager->RefreshData();
 		pDoc->m_pView1->UpdateView(pDoc->m_perfDataManager);
 		pDoc->m_pView2->UpdateView(pDoc->m_perfDataManager);
 		pDoc->m_pView3->UpdateView(pDoc->m_perfDataManager);
 		pDoc->m_pView4->UpdateView(pDoc->m_perfDataManager);
-
-		Sleep(UPDATE_INTERVAL);
+		end = clock();
+		time = end-start;
+		time = UPDATE_INTERVAL-time > 0 ? UPDATE_INTERVAL-time : 0;
+		Sleep(time);
 	}
 	TRACE("Update Func Out!!\n");
 	return EXIT_CODE;
 }
 
-
-
-UINT CResourceMonitorDoc::AddPeriodicLog(LPVOID doc)
+UINT CResourceMonitorDoc::LogTimer(LPVOID doc)
 {
 	CResourceMonitorDoc* pDoc = (CResourceMonitorDoc*)doc;
-	while (true)
+	clock_t start, end;
+	int time;
+	while (pDoc->m_isExit == FALSE)
 	{
-		if (pDoc->m_isExit == TRUE)
-		{
-			break;
-		}
+		start = clock();
 		pDoc->m_pView1->AddPeriodicLog();
 		pDoc->m_pView2->AddPeriodicLog();
 		pDoc->m_pView3->AddPeriodicLog();
 		pDoc->m_pView4->AddPeriodicLog();
-		Sleep(pDoc->m_logInterval);
+		time = end-start;
+		time = pDoc->m_logInterval-time > 0 ? pDoc->m_logInterval-time : 0;
+		Sleep(time);
 	}
 	TRACE("AddPeriodicLog Func Out!!\n");
 	return EXIT_CODE;
 }
-
 void CResourceMonitorDoc::AtExitProcess(vector<ULONG>* exitedProcIDs)
 {
 	m_pView1->RemoveProcessFromList(exitedProcIDs);
@@ -107,48 +105,42 @@ void CResourceMonitorDoc::AtExitProcess(vector<ULONG>* exitedProcIDs)
 }
 void CResourceMonitorDoc::AtNetworkOut(vector<ULONG>* exitedProcIDs)
 {
-	//m_pView1->RemoveProcessFromList(exitedProcIDs);
-	//m_pView2->RemoveProcessFromList(exitedProcIDs);
-	//m_pView3->RemoveProcessFromList(exitedProcIDs);
 	m_pView4->RemoveProcessFromList(exitedProcIDs);
 }
 void CResourceMonitorDoc::AtDiskOut(vector<ULONG>* exitedProcIDs)
 {
-	//m_pView1->RemoveProcessFromList(exitedProcIDs);
-	//m_pView2->RemoveProcessFromList(exitedProcIDs);
 	m_pView3->RemoveProcessFromList(exitedProcIDs);
-	//m_pView4->RemoveProcessFromList(exitedProcIDs);
 }
 
 void CResourceMonitorDoc::ExitThread()
 {
-	DWORD dwRetCode = WaitForSingleObject(m_updaterThread->m_hThread, INFINITE);
+	DWORD dwRetCode = WaitForSingleObject(m_updateTimerThread->m_hThread, INFINITE);
 	if (dwRetCode == WAIT_OBJECT_0)
 	{
 		TRACE("m_updaterThread is terminated normally!\n");
 	}
 	else if (dwRetCode == WAIT_TIMEOUT)
 	{
-		::TerminateThread(m_updaterThread->m_hThread, 0);
+		::TerminateThread(m_updateTimerThread->m_hThread, 0);
 		TRACE("m_updaterThread is terminated FORCELY!");
 	}
 
-	delete m_updaterThread;
-	m_updaterThread = NULL;
+	delete m_updateTimerThread;
+	m_updateTimerThread = NULL;
 
-	dwRetCode = WaitForSingleObject(m_loggerThread->m_hThread, LOG_INTERVAL);
+	dwRetCode = WaitForSingleObject(m_logTimerThread->m_hThread, LOG_INTERVAL);
 	if (dwRetCode == WAIT_OBJECT_0)
 	{
 		TRACE("m_loggerThread is terminated normally!\n");
 	}
 	else if (dwRetCode == WAIT_TIMEOUT)
 	{
-		::TerminateThread(m_loggerThread->m_hThread, 0);
+		::TerminateThread(m_logTimerThread->m_hThread, 0);
 		TRACE("m_loggerThread is terminated FORCELY!");
 	}
 
-	delete m_loggerThread;
-	m_loggerThread = NULL;
+	delete m_logTimerThread;
+	m_logTimerThread = NULL;
 }
 
 BOOL CResourceMonitorDoc::OnNewDocument()
@@ -163,20 +155,20 @@ BOOL CResourceMonitorDoc::OnNewDocument()
 	m_pView4 = (CResourceMonitorView*)this->GetNextView(pos);
 
 	m_perfDataManager->m_pDoc = this;
-
-
-	 //thread 생성
-	m_updaterThread = AfxBeginThread(Update, this, 0, 0, CREATE_SUSPENDED, 0);
-	m_updaterThread->m_bAutoDelete = FALSE;
-	m_updaterThread->ResumeThread();
-
 	m_perfDataManager->m_etw->SetUp();
 
-	m_loggerThread = AfxBeginThread(AddPeriodicLog, this, 0, 0, CREATE_SUSPENDED, 0);
-	m_loggerThread->m_bAutoDelete = FALSE;
-	m_loggerThread->ResumeThread();
+	 //thread 생성
 
-	
+	m_updateTimerThread = AfxBeginThread(UpdateTimer, this, 0, 0, CREATE_SUSPENDED, 0);
+	m_updateTimerThread->m_bAutoDelete = FALSE;
+	m_updateTimerThread->ResumeThread();
+
+
+
+	m_logTimerThread = AfxBeginThread(LogTimer, this, 0, 0, CREATE_SUSPENDED, 0);
+	m_logTimerThread->m_bAutoDelete = FALSE;
+	m_logTimerThread->ResumeThread();
+
 	// TODO: 여기에 재초기화 코드를 추가합니다.
 	// SDI 문서는 이 문서를 다시 사용합니다.
 

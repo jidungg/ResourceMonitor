@@ -1,5 +1,5 @@
 #pragma once
-#include "PerfData.h"
+#include "../PerfData.h"
 
 #define OS_FREEPHYSICALMEM 0
 #define OS_TOTALVISIBLEMEM 1

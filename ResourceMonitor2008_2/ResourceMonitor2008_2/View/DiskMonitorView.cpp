@@ -2,12 +2,12 @@
 //
 
 #include "stdafx.h"
-#include "ResourceMonitor2008_2.h"
+#include "../ResourceMonitor2008_2.h"
 #include "DiskMonitorView.h"
-#include "ResourceMonitorDoc.h"
-#include "PerfDataManager.h"
-#include "PerfDataLogicalDisk.h"
-#include "Etw.h"
+#include "../ResourceMonitorDoc.h"
+#include "../PerfData/PerfDataManager.h"
+//#include "../PerfDataPerfDataLogicalDisk.h"
+#include "../PerfData/Etw/Etw.h"
 
 // CDiskMonitorView
 using namespace std;
@@ -70,17 +70,18 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 	map<ULONG, ProcessDiskData>	*perfTable = &dataManager->m_etw->diskMap;
 	map<CString, LogicalDiskDataObj>	*diskTable =dataManager->m_win32DiskDrive->m_table;
+	map<ULONG, PerProcessDataObj> * processTable = dataManager->m_win32PerfFormatProc->m_table;
 
 	for (map<ULONG, ProcessDiskData>::iterator iter = perfTable->begin(); iter != perfTable->end(); iter++)
 	{
 		CString id;
 		id.Format(_T("%lu"), iter->first);
-		//CString name;
-		//name = iter->second.name;
+		CString name;
+		name = (*processTable)[iter->first].name;
 		CString ioRead;
-		ioRead.Format(_T("%lu"),iter->second.readBtyes);
+		ioRead.Format(_T("%lu"),iter->second.readBtyes /iter->second.averageLength);
 		CString ioWrite;
-		ioWrite.Format(_T("%lu"), iter->second.writeBytes) ;
+		ioWrite.Format(_T("%lu"), iter->second.writeBytes / iter->second.averageLength) ;
 
 		LVFINDINFO info;
 		int nIndex;
@@ -89,22 +90,15 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
-			m_processList.InsertItem(0, id);
+			nIndex = m_processList.GetItemCount();
+			m_processList.InsertItem(nIndex, id);
 
-			//m_processList.SetItemText(0, 1, name);
-			m_processList.SetItemText(0, 2, ioRead);
-			m_processList.SetItemText(0, 3, ioWrite);
 		}
-		else
-		{
-			//m_processList.SetItemText(nIndex, 1, name);
-			m_processList.SetItemText(nIndex, 2, ioRead);
-			m_processList.SetItemText(nIndex, 3, ioWrite);
-		}
-		id.Empty();
-		//name.Empty();
-		ioRead.Empty();
-		ioWrite.Empty();
+
+		m_processList.SetItemText(nIndex, 1, name);
+		m_processList.SetItemText(nIndex, 2, ioRead);
+		m_processList.SetItemText(nIndex, 3, ioWrite);
+		
 	}
 
 
@@ -147,17 +141,42 @@ void CDiskMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 void CDiskMonitorView::AddPeriodicLog()
 {
+	if (!m_farmeList) return;
+	CString str = _T("");
+	CHeaderCtrl *pHeaderCtrl;
+
+	pHeaderCtrl = m_farmeList.GetHeaderCtrl();
+	int frameColCount = pHeaderCtrl->GetItemCount() - 1;
+	for (int i = 0; i< frameColCount; ++i)
+	{
+		str += m_frameCaptions[i] + _T(": ");
+		str += m_farmeList.GetItemText(0, i + 1) + _T(", ");
+	}
+	sLogger.AddLog(CLogger::LOG_DISK, str);
+
+	pHeaderCtrl = m_processList.GetHeaderCtrl();
+	int tableColCount = pHeaderCtrl->GetItemCount();
+	int tableItemCount = m_processList.GetItemCount();
+	for (int j = 0; j < tableItemCount; j++)
+	{
+		ULONG readBytes = _wtof(m_processList.GetItemText(j, 2));
+		ULONG writeBytes = _wtof(m_processList.GetItemText(j, 3));
+		if (readBytes >= GetDocument()->m_diskThreshold  
+			|| writeBytes >= GetDocument()->m_diskThreshold)
+		{
+			str = _T("");
+			for (int i = 0; i < tableColCount; ++i)
+			{
+
+				str += m_tableCaptions[tableColCount - i - 1] + _T(": ");
+				str += m_processList.GetItemText(j, i) + _T(", ");
+			}
+			sLogger.AddLog(CLogger::LOG_DISK, str);
+			str.Empty();
+		}
+
+	}
 }
-
-//void CDiskMonitorView::OnDraw(CDC* pDC)
-//{
-//	CResourceMonitorDoc* pDoc = GetDocument();
-//	// TODO: 여기에 그리기 코드를 추가합니다.
-//
-//}
-
-
-// CDiskMonitorView 진단입니다.
 
 #ifdef _DEBUG
 void CDiskMonitorView::AssertValid() const

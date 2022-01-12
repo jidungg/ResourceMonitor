@@ -9,7 +9,7 @@ class CDlgSetLogThreshold : public CDialog
 	DECLARE_DYNAMIC(CDlgSetLogThreshold)
 
 public:
-	CDlgSetLogThreshold(float *cpu, int *mem);   // 표준 생성자입니다.
+	CDlgSetLogThreshold(float *cpu, int *mem, ULONG *net, ULONG *disk);   // 표준 생성자입니다.
 	CDlgSetLogThreshold(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CDlgSetLogThreshold();
 
@@ -23,9 +23,15 @@ protected:
 public:
 	CEdit m_editCPUThreshold;
 	CEdit m_editMemThreshold;
+	CEdit m_editNetThreshold;
+	CEdit m_editDiskThreshold;
+
 	float *cpuThreshold;
 	int *memThreshold;
+	ULONG *netThreshold;
+	ULONG *diskThreshold;
 	
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedOk();
+
 };

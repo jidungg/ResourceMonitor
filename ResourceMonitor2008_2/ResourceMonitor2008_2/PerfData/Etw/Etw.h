@@ -3,6 +3,7 @@
 #define INITGUID
 #include <map>
 #include <vector>
+#include <queue>
 
 static GUID SystemTraceControlGuid_I = { 0x9e814aad, 0x3204, 0x11d2,{ 0x9a, 0x82, 0x00, 0x60, 0x08, 0xa8, 0x69, 0x39 } };
 static GUID DiskIoGuid_I = { 0x3d6fa8d4, 0xfe05, 0x11d0,{ 0x9d, 0xda, 0x00, 0xc0, 0x4f, 0xd7, 0xba, 0x7c } };
@@ -93,14 +94,26 @@ struct ProcessDiskData
 	ULONG readBtyes;
 	ULONG writeBytes;
 	int	averageLength;
-	int avgOutCount;
+	int outCount;
 	ProcessDiskData(){;}
-	ProcessDiskData(int r, int w)
+	ProcessDiskData(ULONG r, ULONG w)
 	{
 		readBtyes = r;
 		writeBytes = w;
 		averageLength = 1;
-		avgOutCount = AVG_CALC_COUNT;
+		outCount = AVG_CALC_COUNT;
+	}
+};
+struct ProcessDiskDataQ
+{
+	ULONG readBytes;
+	ULONG writeBytes;
+
+	ProcessDiskDataQ(){;}
+	ProcessDiskDataQ(ULONG r, ULONG s)
+	{
+		readBytes = r;
+		writeBytes = s;
 	}
 };
 struct ProcessNetworkData
@@ -108,14 +121,26 @@ struct ProcessNetworkData
 	ULONG receiveBytes;
 	ULONG sendBytes;
 	int	averageLength;
-	int avgOutCount;
+	int outCount;
 	ProcessNetworkData(){;}
-	ProcessNetworkData(int r, int s)
+	ProcessNetworkData(ULONG r, ULONG s)
 	{
 		receiveBytes = r;
 		sendBytes = s;
 		averageLength = 1;
-		avgOutCount = AVG_CALC_COUNT;
+		outCount = AVG_CALC_COUNT;
+	}
+};
+struct ProcessNetworkDataQ
+{
+	ULONG receiveBytes;
+	ULONG sendBytes;
+
+	ProcessNetworkDataQ(){;}
+	ProcessNetworkDataQ(ULONG r, ULONG s)
+	{
+		receiveBytes = r;
+		sendBytes = s;
 	}
 };
 class CEtw
@@ -129,24 +154,26 @@ public:
 	void CleanUp();
 	void StartTraceKernelLogger();
 	void OpenTraceKernelLogger();
-	int CumulativeAverage(int length, int prevAvg, int newNumber);
 	void Update();
 	void UpdateDisk();
 	void UpdateNetwork();
 	void FindNetworkOutProc();
-	void FIndDiskOutProc();
+	void FindDiskOutProc();
 
 	CResourceMonitorDoc		*m_pDoc ;
 	ULONG					m_status;
 	DWORD					m_etwThreadID;
 	HANDLE					m_etwThreadHandle;
 
-	ULONG m_totalIO;
+	ULONG m_netTotalIO;
 	int m_totlaAvgLength;
-	std::vector<ULONG> networkOutList;
-	std::vector<ULONG> diskOutList;
+
 	std::map<ULONG, ProcessDiskData> diskMap;
 	std::map<ULONG, ProcessNetworkData> networkMap;
+	std::map<ULONG, std::queue<ProcessDiskDataQ>> diskQue;
+	std::map<ULONG, std::queue<ProcessNetworkDataQ>> networkQue;
 	static std::map<ULONG, ProcessDiskData> diskMapRealTime;
 	static std::map<ULONG, ProcessNetworkData> networkMapRealTIme;
+	std::vector<ULONG> networkOutList;
+	std::vector<ULONG> diskOutList;
 };

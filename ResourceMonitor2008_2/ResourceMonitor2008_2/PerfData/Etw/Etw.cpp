@@ -9,10 +9,9 @@
 #include <evntrace.h>
 #include <evntcons.h>
 #include <in6addr.h>
-#include <map>
-#include <vector>
 #include "Etw.h"
-#include "ResourceMonitorDoc.h"
+#include "../../ResourceMonitorDoc.h"
+#include "EtwData.h"
 
 using namespace std;
 
@@ -35,8 +34,9 @@ CEtw::CEtw(CResourceMonitorDoc* pDoc)
 	m_status = ERROR_SUCCESS;
 	m_SessionHandle = 0;
 	m_pSessionProperties = NULL;
-	m_totalIO =0;
+	m_netTotalIO =0;
 	m_totlaAvgLength = 1;
+
 }
 CEtw::~CEtw(void)
 {
@@ -96,7 +96,7 @@ void CEtw::StartTraceKernelLogger()
 	// Create the trace session.
 
 
-	m_status = ControlTrace(0, KERNEL_LOGGER_NAME, m_pSessionProperties, EVENT_TRACE_CONTROL_STOP);
+	//m_status = ControlTrace(0, KERNEL_LOGGER_NAME, m_pSessionProperties, EVENT_TRACE_CONTROL_STOP);
 
 	m_status = StartTrace((PTRACEHANDLE)&m_SessionHandle, KERNEL_LOGGER_NAME, m_pSessionProperties);
 
@@ -280,18 +280,7 @@ void ProcessNetworkEvent(const ETW_NETWORK_EVENT& Event)
 	}
 	return;
 }
-int CEtw::CumulativeAverage (int length, int prevAvg, int newNumber) {
-	if(length == 1)
-	{
-		return newNumber;
-	}
 
-	double oldWeight = (length - 1) / (double)length;
-	double newWeight = 1 / (double)length;
-	int res = (prevAvg * oldWeight) + (newNumber * newWeight);
-
-	return res;
-}
 void CEtw::Update()
 {
 	UpdateDisk();
@@ -301,64 +290,114 @@ void CEtw::UpdateDisk()
 {
 	for(map<ULONG, ProcessDiskData>::iterator it = diskMapRealTime.begin(); it != diskMapRealTime.end(); it ++)
 	{
+		ProcessDiskDataQ popData;
+		popData.readBytes = 0;
+		popData.writeBytes = 0;
 		ULONG id = it->first;
 
 		if(diskMap.count(id) == 0)
 		{
 			diskMap[id] = ProcessDiskData(0,0);
 		}
-		if(!(it->second.readBtyes == 0 && it->second.writeBytes == 0))
+
+		if(diskQue.count(id) == 0)
 		{
-			diskMap[id].avgOutCount = AVG_CALC_COUNT;;
+			queue<ProcessDiskDataQ> q;
+			q.push(ProcessDiskDataQ(it->second.readBtyes,it->second.writeBytes));
+			diskQue[id] = q;
 		}else
 		{
-			diskMap[id].avgOutCount --;
+			if(diskQue[id].size() >= AVG_CALC_COUNT)
+			{
+				popData = diskQue[id].front();
+				diskQue[id].pop();
+				
+			}
+			diskQue[id].push(ProcessDiskDataQ(it->second.readBtyes,it->second.writeBytes));
+			
 		}
-		diskMap[id].readBtyes = CumulativeAverage(diskMap[id].averageLength,diskMap[id].readBtyes,it->second.readBtyes);
-		diskMap[id].writeBytes = CumulativeAverage(diskMap[id].averageLength,diskMap[id].writeBytes,it->second.writeBytes);
+		if(!(it->second.readBtyes == 0 && it->second.writeBytes == 0))
+		{
+			diskMap[id].outCount = AVG_CALC_COUNT;
+		}else
+		{
+			diskMap[id].outCount --;
+		}
 		if(diskMap[id].averageLength < AVG_CALC_COUNT)
 		{
 			diskMap[id].averageLength++;
 		}
-		it->second.readBtyes =0;
+		diskMap[id].readBtyes -= popData.readBytes;
+		diskMap[id].readBtyes += it->second.readBtyes;
+		diskMap[id].writeBytes -= popData.writeBytes;
+		diskMap[id].writeBytes += it->second.writeBytes;
+
+		it->second.readBtyes = 0;
 		it->second.writeBytes = 0;
+		
 	}
-	
-	FIndDiskOutProc();
+
+	FindDiskOutProc();
 }
 void CEtw::UpdateNetwork()
 {
-	int newTotal =0;
+	//큐에 업데이트마다 데이터 넣음
+	//큐에 들어있는 데이터 기반으로 평균 구해서 Map에 넣음
+	m_netTotalIO = 0;
 	for(map<ULONG, ProcessNetworkData>::iterator it = networkMapRealTIme.begin(); it != networkMapRealTIme.end(); it ++)
 	{
+		ProcessNetworkDataQ popData;
+		popData.receiveBytes = 0;
+		popData.sendBytes = 0;
 		ULONG id = it->first;
+
 		if(networkMap.count(id) == 0)
 		{
 			networkMap[id] = ProcessNetworkData(0,0);
 		}
-		if(!(it->second.receiveBytes == 0 && it->second.sendBytes == 0))
+
+		if(networkQue.count(id) == 0)
 		{
-			networkMap[id].avgOutCount = AVG_CALC_COUNT;;
+			queue<ProcessNetworkDataQ> q;
+			q.push(ProcessNetworkDataQ(it->second.receiveBytes,it->second.sendBytes));
+			networkQue[id] = q;
 		}else
 		{
-			networkMap[id].avgOutCount --;
+			if(networkQue[id].size() >= AVG_CALC_COUNT)
+			{
+				popData = networkQue[id].front();
+				networkQue[id].pop();
+				
+			}
+			networkQue[id].push(ProcessNetworkDataQ(it->second.receiveBytes,it->second.sendBytes));
+			
 		}
-		newTotal += it->second.receiveBytes;
-		newTotal += it->second.sendBytes;
-		
-		networkMap[id].receiveBytes = CumulativeAverage(networkMap[id].averageLength,networkMap[id].receiveBytes,it->second.receiveBytes);
-		networkMap[id].sendBytes = CumulativeAverage(networkMap[id].averageLength,networkMap[id].sendBytes,it->second.sendBytes);
+		if(!(it->second.receiveBytes == 0 && it->second.sendBytes == 0))
+		{
+			networkMap[id].outCount = AVG_CALC_COUNT;
+		}else
+		{
+			networkMap[id].outCount --;
+		}
 		if(networkMap[id].averageLength < AVG_CALC_COUNT)
 		{
 			networkMap[id].averageLength++;
 		}
+		networkMap[id].receiveBytes -= popData.receiveBytes;
+		networkMap[id].receiveBytes += it->second.receiveBytes;
+		networkMap[id].sendBytes -= popData.sendBytes;
+		networkMap[id].sendBytes += it->second.sendBytes;
+
+		m_netTotalIO += networkMap[id].receiveBytes;
+		m_netTotalIO += networkMap[id].sendBytes;
+
 		it->second.receiveBytes = 0;
 		it->second.sendBytes = 0;
+		
 	}
-	m_totalIO = CumulativeAverage(m_totlaAvgLength,m_totalIO,newTotal);
 	if(m_totlaAvgLength < AVG_CALC_COUNT)
 	{
-		m_totlaAvgLength++;
+		m_totlaAvgLength ++;
 	}
 	FindNetworkOutProc();
 	
@@ -367,7 +406,7 @@ void CEtw::FindNetworkOutProc()
 {
 	for(map<ULONG, ProcessNetworkData>::iterator it = networkMap.begin(); it != networkMap.end(); it ++)
 	{
-		if(it->second.avgOutCount == 0)
+		if(it->second.outCount <= 0)
 		{
 			networkOutList.push_back(it->first);
 		}
@@ -376,6 +415,7 @@ void CEtw::FindNetworkOutProc()
 	{
 		networkMapRealTIme.erase(*it);
 		networkMap.erase(*it);
+		networkQue.erase(*it);
 	}
 	if(networkOutList.size() > 0)
 	{
@@ -383,20 +423,20 @@ void CEtw::FindNetworkOutProc()
 	}
 	networkOutList.clear();
 }
-void CEtw::FIndDiskOutProc()
+void CEtw::FindDiskOutProc()
 {
 	for(map<ULONG, ProcessDiskData>::iterator it = diskMap.begin(); it != diskMap.end(); it ++)
 	{
-		if(it->second.avgOutCount == 0)
+		if(it->second.outCount == 0)
 		{
 			diskOutList.push_back(it->first);
 		}
 	}
 	for(vector<ULONG>::iterator it = diskOutList.begin(); it != diskOutList.end(); it++)
 	{
-		m_pDoc->AtDiskOut(&diskOutList);
 		diskMap.erase(*it);
 		diskMapRealTime.erase(*it);
+		diskQue.erase(*it);
 	}
 	if(diskOutList.size() > 0)
 	{

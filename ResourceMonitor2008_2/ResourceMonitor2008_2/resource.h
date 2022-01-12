@@ -13,6 +13,9 @@
 #define IDC_EDIT2                       1001
 #define IDC_EDIT_CPU                    1002
 #define IDC_COMBO1                      1003
+#define IDC_EDIT_NET                    1003
+#define IDC_EDIT_MEM3                   1004
+#define IDC_EDIT_DISK                   1004
 #define ID_32771                        32771
 #define ID_SET_LOG_INTERVAL             32772
 #define ID_LOG_SETTHRESHOLD             32773

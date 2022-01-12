@@ -8,7 +8,7 @@
 #include "ResourceMonitor2008_2.h"
 #include "MainFrm.h"
 #include "ResourceMonitorDoc.h"
-#include "ResourceMonitorView.h"
+#include "./View/ResourceMonitorView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PerfDataPerProcess.h"
-#include "PerfDataManager.h"
-#include "ResourceMonitorDoc.h"
+#include "../PerfDataManager.h"
+#include "../../ResourceMonitorDoc.h"
 
 CPerfDataPerProcess::CPerfDataPerProcess()
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "PerfData.h"
+#include "../PerfData.h"
 
 #define PROCESS_ID_INDEX 0
 #define PROCESS_NAME_INDEX 1

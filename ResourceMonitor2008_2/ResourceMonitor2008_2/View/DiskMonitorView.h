@@ -2,8 +2,8 @@
 
 
 #include "ResourceMonitorView.h"
-#include "AdvComboBox.h"
-#include "AdvListCtrl.h"
+#include "../AdvComboBox.h"
+#include "../AdvListCtrl.h"
 
 // CDiskMonitorView ∫‰¿‘¥œ¥Ÿ.
 

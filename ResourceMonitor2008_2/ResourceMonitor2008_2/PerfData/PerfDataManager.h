@@ -1,9 +1,10 @@
 #pragma once
 #include "PerfData.h"
-#include "PerfDataPerProcess.h"
-#include "PerfDataOS.h"
-#include "PerfDataLogicalDisk.h"
-#include "PerfDataOSProcessor.h"
+#include "./WMI/PerfDataPerProcess.h"
+#include "./WMI/PerfDataOS.h"
+#include "./WMI/PerfDataLogicalDisk.h"
+#include "./WMI/PerfDataOSProcessor.h"
+#include "./Etw/Etw.h"
 
 class CEtw;
 

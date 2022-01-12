@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "ResourceMonitor2008_2.h"
+#include "../ResourceMonitor2008_2.h"
 #include "DlgSetLogInterval.h"
 
 

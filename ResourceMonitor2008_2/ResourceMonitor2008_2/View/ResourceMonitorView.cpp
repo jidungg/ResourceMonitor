@@ -6,11 +6,11 @@
 // SHARED_HANDLERS는 미리 보기, 축소판 그림 및 검색 필터 처리기를 구현하는 ATL 프로젝트에서 정의할 수 있으며
 // 해당 프로젝트와 문서 코드를 공유하도록 해 줍니다.
 #ifndef SHARED_HANDLERS
-#include "ResourceMonitor2008_2.h"
+#include "../ResourceMonitor2008_2.h"
 #endif
-#include "ResourceMonitorDoc.h"
+#include "../ResourceMonitorDoc.h"
 #include "ResourceMonitorView.h"
-#include "PerfData.h"
+#include "../PerfData/PerfData.h"
 #include <vector>
 
 using namespace std;

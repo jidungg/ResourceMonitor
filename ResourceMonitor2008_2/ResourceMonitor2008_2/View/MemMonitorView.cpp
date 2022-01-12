@@ -2,10 +2,10 @@
 //
 
 #include "stdafx.h"
-#include "ResourceMonitor2008_2.h"
+#include "../ResourceMonitor2008_2.h"
 #include "MemMonitorView.h"
-#include "ResourceMonitorDoc.h"
-#include "PerfDataManager.h"
+#include "../ResourceMonitorDoc.h"
+#include "../PerfData/PerfDataManager.h"
 
 #include <vector>
 
@@ -83,20 +83,15 @@ void CMemMonitorView::UpdateView(CPerfDataManager * dataManager)
 
 		if ((nIndex = m_processList.FindItem(&info)) == -1)
 		{
-			m_processList.InsertItem(0, id);
+			nIndex = m_processList.GetItemCount();
+			m_processList.InsertItem(nIndex, id);
 
-			m_processList.SetItemText(0, 1, name);
-			m_processList.SetItemText(0, 2, virtualBytes);
-			m_processList.SetItemText(0, 3, workingSet);
-			m_processList.SetItemText(0, 4, privateBytes);
 		}
-		else
-		{
-			m_processList.SetItemText(nIndex, 1, name);
-			m_processList.SetItemText(nIndex, 2, virtualBytes);
-			m_processList.SetItemText(nIndex, 3, workingSet);
-			m_processList.SetItemText(nIndex, 4, privateBytes);
-		}
+		m_processList.SetItemText(nIndex, 1, name);
+		m_processList.SetItemText(nIndex, 2, virtualBytes);
+		m_processList.SetItemText(nIndex, 3, workingSet);
+		m_processList.SetItemText(nIndex, 4, privateBytes);
+		
 		id.Empty();
 		name.Empty();
 		workingSet.Empty();

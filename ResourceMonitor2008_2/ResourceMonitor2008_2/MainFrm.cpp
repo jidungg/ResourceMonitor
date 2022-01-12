@@ -4,17 +4,17 @@
 
 #include "stdafx.h"
 #include "ResourceMonitor2008_2.h"
-#include "ResourceMonitorView.h"
-#include "CPUMonitorView.h"
-#include "MemMonitorView.h"
-#include "DiskMonitorView.h"
-#include "NetMonitorView.h"
+#include "./View/ResourceMonitorView.h"
+#include "./View/CPUMonitorView.h"
+#include "./View/MemMonitorView.h"
+#include "./View/DiskMonitorView.h"
+#include "./View/NetMonitorView.h"
 #include "MainFrm.h"
 #include "ResourceMonitorDoc.h"
-#include "PerfDataManager.h"
-#include "DlgSetLogInterval.h"
-#include "DlgSetLogThreshold.h"
-#include "Etw.h"
+#include "./PerfData/PerfDataManager.h"
+#include "./Logger/DlgSetLogInterval.h"
+#include "./Logger/DlgSetLogThreshold.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 
 	ON_COMMAND(ID_LOG_SETINTERVAL, &CMainFrame::OnLogSetinterval)
 	ON_COMMAND(ID_LOG_SETTHRESHOLD, &CMainFrame::OnLogSetthreshold)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -44,6 +45,7 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: 여기에 멤버 초기화 코드를 추가합니다.
+
 }
 
 CMainFrame::~CMainFrame()
@@ -55,31 +57,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
-	//CMenu menuMain;
-	//menuMain.CreateMenu();
-	//CMenu menuPopup;
-	//menuPopup.CreatePopupMenu();
-
-	//CMenu menuSubPopup;
-	//menuSubPopup.CreatePopupMenu();
-
-	//// Item 팝업메뉴의 하위메뉴 입니다.
-	//menuSubPopup.AppendMenu(MF_STRING, 1001, _T("SubItem2-1"));
-
-	//// Test 최상위 메뉴의 팝업메뉴 입니다.
-	//	// 하위 메뉴가 있을 땐 MF_POPUP을 인자로 넘겨주셔야 합니다.
-	//menuPopup.AppendMenu(MF_STRING, 1101, _T("Item1"));
-	//menuPopup.AppendMenu(MF_POPUP, (UINT)menuSubPopup.Detach(), _T("Item2"));
-	//menuPopup.AppendMenu(MF_STRING, 1102, _T("Item3"));
-
-	//// 최상위 메뉴 입니다.
-	//menuMain.AppendMenu(MF_POPUP, (UINT)menuPopup.Detach(), _T("Test"));
-
-	//// 윈도우에 메뉴를 추가합니다.
-	//SetMenu(&menuMain);
-	//// 메뉴 객체와 메뉴를 분리합니다.
-	//menuMain.Detach();
 
 	return 0;
 }
@@ -96,7 +73,6 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_wndSplitter.CreateView(1, 0, RUNTIME_CLASS(CDiskMonitorView), CSize(rect.Width()/2, rect.Height()/2), pContext);
 	m_wndSplitter.CreateView(1, 1, RUNTIME_CLASS(CNetMonitorView), CSize(rect.Width()/2, rect.Height()/2), pContext);
 
-	//SetActiveView((CView *)m_wndSplitter.GetPane(0, 0));
 	return TRUE;
 }
 
@@ -104,19 +80,9 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
-	//if (cs.hMenu != NULL)
-	//{
-	//	::DestroyMenu(cs.hMenu);
-	//	cs.hMenu = NULL;
 
-	//}
-	//CMenu* pMenu = GetMenu();
 
-	//pMenu->DeleteMenu(1, MF_BYPOSITION);
 
-	//DrawMenuBar();
 	return TRUE;
 }
 
@@ -130,6 +96,7 @@ void CMainFrame::AssertValid() const
 
 void CMainFrame::Dump(CDumpContext& dc) const
 {
+		
 	CFrameWnd::Dump(dc);
 }
 #endif //_DEBUG
@@ -188,28 +155,6 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 }
 
 
-//void CMainFrame::OnSetLogInterval()
-//{
-//	//CDlgSetLogInterval *pDlg = new CDlgSetLogInterval;
-//	//pDlg->Create(IDD_SET_LOG_INTERVAL);
-//	//pDlg->ShowWindow(SW_SHOW);
-//	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
-//	CDlgSetLogInterval dlg(&(doc->m_logInterval));
-//	dlg.DoModal();
-//
-//	return ;
-//	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-//}
-//
-//
-//void CMainFrame::OnLogSetthreshold()
-//{
-//	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
-//	CDlgSetLogThreshold dlg(&(doc->m_cpuThreshold), &(doc->m_memThreshold));
-//	dlg.DoModal();
-//	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-//}
-
 void CMainFrame::OnLogSetinterval()
 {
 	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
@@ -222,6 +167,18 @@ void CMainFrame::OnLogSetthreshold()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	CResourceMonitorDoc* doc = (CResourceMonitorDoc*)GetActiveDocument();
-	CDlgSetLogThreshold dlg(&(doc->m_cpuThreshold), &(doc->m_memThreshold));
+	CDlgSetLogThreshold dlg(&(doc->m_cpuThreshold), &(doc->m_memThreshold), &(doc->m_networkThreshold), &(doc->m_diskThreshold));
 	dlg.DoModal();
 }
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	switch(nIDEvent)
+	{
+
+	}
+	CFrameWnd::OnTimer(nIDEvent);
+}
+
+

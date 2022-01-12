@@ -4,7 +4,7 @@
 
 #pragma once
 
-
+class CResourceMonitorDoc;
 class CMainFrame : public CFrameWnd
 {
 public:
@@ -18,11 +18,13 @@ public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
+
 protected:  // 컨트롤 모음이 포함된 멤버입니다.
 	CSplitterWnd	  m_wndSplitter;
 	CToolBar          m_wndToolBar;
 	CStatusBar        m_wndStatusBar;
-
+	
+	CResourceMonitorDoc* m_pDoc;
 	// 생성된 메시지 맵 함수	
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
@@ -37,6 +39,7 @@ protected:  // 컨트롤 모음이 포함된 멤버입니다.
 public:
 	afx_msg void OnLogSetinterval();
 	afx_msg void OnLogSetthreshold();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 

@@ -204,38 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DlgSetLogInterval.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DlgSetLogInterval.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DlgSetLogThreshold.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DlgSetLogThreshold.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger_Base.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Logger_Base.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
@@ -299,7 +267,7 @@
 				Name="View"
 				>
 				<File
-					RelativePath=".\CPUMonitorView.cpp"
+					RelativePath=".\View\CPUMonitorView.cpp"
 					>
 				</File>
 				<File
@@ -307,7 +275,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\DiskMonitorView.cpp"
+					RelativePath=".\View\DiskMonitorView.cpp"
 					>
 				</File>
 				<File
@@ -315,7 +283,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\MemMonitorView.cpp"
+					RelativePath=".\View\MemMonitorView.cpp"
 					>
 				</File>
 				<File
@@ -323,7 +291,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\NetMonitorView.cpp"
+					RelativePath=".\View\NetMonitorView.cpp"
 					>
 				</File>
 				<File
@@ -331,7 +299,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ResourceMonitorView.cpp"
+					RelativePath=".\View\ResourceMonitorView.cpp"
 					>
 				</File>
 				<File
@@ -340,25 +308,93 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="Logger"
+				>
+				<File
+					RelativePath=".\Logger\DlgSetLogInterval.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\DlgSetLogInterval.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\DlgSetLogThreshold.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\DlgSetLogThreshold.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\Logger.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\Logger.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\Logger_Base.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Logger\Logger_Base.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="PerfData"
 				>
 				<File
-					RelativePath=".\PerfDataManager.cpp"
+					RelativePath=".\PerfData\PerfData.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\PerfDataManager.h"
+					RelativePath=".\PerfData\PerfData.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PerfData\PerfDataManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PerfData\PerfDataManager.h"
 					>
 				</File>
 				<Filter
-					Name="ETW"
+					Name="Etw"
 					>
 					<File
-						RelativePath=".\Etw.cpp"
+						RelativePath=".\PerfData\Etw\Etw.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\Etw.h"
+						RelativePath=".\PerfData\Etw\Etw.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwData.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwData.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwDisk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwDisk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwNetwork.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\PerfData\Etw\EtwNetwork.h"
 						>
 					</File>
 				</Filter>
@@ -366,43 +402,35 @@
 					Name="WMI"
 					>
 					<File
-						RelativePath=".\PerfData.cpp"
+						RelativePath=".\PerfData\WMI\PerfDataLogicalDisk.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfData.h"
+						RelativePath=".\PerfData\WMI\PerfDataLogicalDisk.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataLogicalDisk.cpp"
+						RelativePath=".\PerfData\WMI\PerfDataOS.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataLogicalDisk.h"
+						RelativePath=".\PerfData\WMI\PerfDataOS.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataOS.cpp"
+						RelativePath=".\PerfData\WMI\PerfDataOSProcessor.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataOS.h"
+						RelativePath=".\PerfData\WMI\PerfDataOSProcessor.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataOSProcessor.cpp"
+						RelativePath=".\PerfData\WMI\PerfDataPerProcess.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\PerfDataOSProcessor.h"
-						>
-					</File>
-					<File
-						RelativePath=".\PerfDataPerProcess.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\PerfDataPerProcess.h"
+						RelativePath=".\PerfData\WMI\PerfDataPerProcess.h"
 						>
 					</File>
 				</Filter>

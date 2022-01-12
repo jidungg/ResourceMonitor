@@ -5,7 +5,7 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "AdvListCtrl.h"
+#include "../AdvListCtrl.h"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 // ResourceMonitorDoc.h : CResourceMonitorDoc 클래스의 인터페이스
 //
 #pragma once
-#include "Logger.h"
+#include "./Logger/Logger.h"
 #include <vector>
 
 
@@ -18,10 +18,20 @@ class CResourceMonitorDoc : public CDocument
 public:
 	CResourceMonitorDoc();
 	virtual ~CResourceMonitorDoc();
+	virtual BOOL OnNewDocument();
+	virtual void Serialize(CArchive& ar);
 
-	BOOL m_isExit ;
-	CWinThread* m_updaterThread;
-	CWinThread* m_loggerThread;
+	// Thread 함수
+	static UINT UpdateTimer(LPVOID);
+	static UINT LogTimer(LPVOID doc);
+
+	// Thread 종료 함수
+	void ExitThread(); 
+
+	void AtExitProcess(std::vector<ULONG>* exitedProcIDs);
+	void AtNetworkOut(std::vector<ULONG>*);
+	void AtDiskOut(std::vector<ULONG>*);
+
 	CPerfDataManager* m_perfDataManager;
 	CResourceMonitorView* m_pView1;
 	CResourceMonitorView* m_pView2;
@@ -31,20 +41,12 @@ public:
 	int m_logInterval ;
 	float m_cpuThreshold ;
 	int m_memThreshold;
+	ULONG m_networkThreshold;
+	ULONG m_diskThreshold;
 
-	// Thread 함수
-	static UINT Update(LPVOID);
-	static UINT AddPeriodicLog(LPVOID doc);
-
-	// Thread 종료 함수
-	void ExitThread(); 
-
-	void AtExitProcess(std::vector<ULONG>* exitedProcIDs);
-	void AtNetworkOut(std::vector<ULONG>*);
-	void AtDiskOut(std::vector<ULONG>*);
-
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+	BOOL m_isExit ;
+	CWinThread* m_updateTimerThread;
+	CWinThread* m_logTimerThread;
 
 protected: // serialization에서만 만들어집니다.
 	DECLARE_DYNCREATE(CResourceMonitorDoc)

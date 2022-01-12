@@ -1,5 +1,5 @@
 #pragma once
-#include "perfdata.h"
+#include "../perfdata.h"
 
 #define OSPROC_CPU_TOTAL 0
 #define OSPROC_CPU_NAME 1

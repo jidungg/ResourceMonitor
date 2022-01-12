@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "PerfDataManager.h"
-#include "Etw.h"
+#include "./Etw/Etw.h"
 #include <vector>
 
 

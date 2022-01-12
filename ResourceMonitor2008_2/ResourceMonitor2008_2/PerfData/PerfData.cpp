@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <Wbemidl.h>
-#include "ResourceMonitorView.h"
+#include "../View/ResourceMonitorView.h"
 #include <vector>
 #include <map>
 #pragma comment(lib, "wbemuuid.lib")
