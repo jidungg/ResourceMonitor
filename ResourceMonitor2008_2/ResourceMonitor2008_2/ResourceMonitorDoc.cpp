@@ -17,6 +17,9 @@
 #include <vector>
 #include "./PerfData/Etw/Etw.h"
 #include <time.h>
+#include <Lm.h>
+#pragma comment(lib,"netapi32.lib")
+#pragma warning(disable:4996)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,8 +34,10 @@ BEGIN_MESSAGE_MAP(CResourceMonitorDoc, CDocument)
 
 END_MESSAGE_MAP()
 
-
+DWORD CResourceMonitorDoc::WinMajorVersion;
+DWORD CResourceMonitorDoc::WinMinorVersion;
 // CResourceMonitorDoc »ý¼º/¼Ò¸ê
+
 
 CResourceMonitorDoc::CResourceMonitorDoc() 
 {
@@ -45,6 +50,7 @@ CResourceMonitorDoc::CResourceMonitorDoc()
 	m_memThreshold = LOG_MEM_THRESHOLD;
 	m_networkThreshold = LOG_NET_THRESHOLD;
 	m_diskThreshold = LOG_DISK_THRESHOLD;
+	
 }
 
 CResourceMonitorDoc::~CResourceMonitorDoc()
@@ -73,7 +79,6 @@ UINT CResourceMonitorDoc::UpdateTimer(LPVOID doc)
 		time = UPDATE_INTERVAL-time > 0 ? UPDATE_INTERVAL-time : 0;
 		Sleep(time);
 	}
-	TRACE("Update Func Out!!\n");
 	return EXIT_CODE;
 }
 
@@ -89,11 +94,11 @@ UINT CResourceMonitorDoc::LogTimer(LPVOID doc)
 		pDoc->m_pView2->AddPeriodicLog();
 		pDoc->m_pView3->AddPeriodicLog();
 		pDoc->m_pView4->AddPeriodicLog();
+		end = clock();
 		time = end-start;
 		time = pDoc->m_logInterval-time > 0 ? pDoc->m_logInterval-time : 0;
 		Sleep(time);
 	}
-	TRACE("AddPeriodicLog Func Out!!\n");
 	return EXIT_CODE;
 }
 void CResourceMonitorDoc::AtExitProcess(vector<ULONG>* exitedProcIDs)
@@ -142,12 +147,25 @@ void CResourceMonitorDoc::ExitThread()
 	delete m_logTimerThread;
 	m_logTimerThread = NULL;
 }
-
+BOOL CResourceMonitorDoc::GetOSVersion(DWORD &major, DWORD &minor)
+{
+	LPWKSTA_INFO_100 pBuf =NULL;
+	if(NERR_Success != NetWkstaGetInfo(NULL,100,(LPBYTE*)&pBuf))
+	{
+		return FALSE;
+	}
+	WinMajorVersion=pBuf->wki100_ver_major;
+	WinMinorVersion=pBuf->wki100_ver_minor;
+	NetApiBufferFree(pBuf);
+}
 BOOL CResourceMonitorDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 	if (this == NULL)return FALSE;
+
+	GetOSVersion(CResourceMonitorDoc::WinMajorVersion, CResourceMonitorDoc::WinMinorVersion);
+
 	POSITION pos = this->GetFirstViewPosition();
 	m_pView1 = (CResourceMonitorView*)this->GetNextView(pos);
 	m_pView2 = (CResourceMonitorView*)this->GetNextView(pos);

@@ -5,6 +5,8 @@
 #pragma once
 
 class CResourceMonitorDoc;
+class Version_Dialog;
+
 class CMainFrame : public CFrameWnd
 {
 public:
@@ -17,6 +19,7 @@ public:
 
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	
 
 
 protected:  // 컨트롤 모음이 포함된 멤버입니다.
@@ -24,6 +27,8 @@ protected:  // 컨트롤 모음이 포함된 멤버입니다.
 	CToolBar          m_wndToolBar;
 	CStatusBar        m_wndStatusBar;
 	
+	Version_Dialog*		m_pVersionDlg;
+
 	CResourceMonitorDoc* m_pDoc;
 	// 생성된 메시지 맵 함수	
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -40,6 +45,8 @@ public:
 	afx_msg void OnLogSetinterval();
 	afx_msg void OnLogSetthreshold();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnMenuVersion();
+	afx_msg void OnLogSetlogpath();
 };
 
 

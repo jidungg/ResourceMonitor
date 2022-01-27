@@ -102,7 +102,7 @@ void CNetMonitorView::AddPeriodicLog()
 		str += m_frameCaptions[i] + _T(": ");
 		str += m_farmeList.GetItemText(0, i + 1) + _T(", ");
 	}
-	sLogger.AddLog(CLogger::LOG_NETWORK, str);
+	CLogger::GetInstance().AddLog(CLogger::LOG_NETWORK, str);
 
 	pHeaderCtrl = m_processList.GetHeaderCtrl();
 	int tableColCount = pHeaderCtrl->GetItemCount();
@@ -121,7 +121,7 @@ void CNetMonitorView::AddPeriodicLog()
 				str += m_tableCaptions[tableColCount - i - 1] + _T(": ");
 				str += m_processList.GetItemText(j, i) + _T(", ");
 			}
-			sLogger.AddLog(CLogger::LOG_NETWORK, str);
+			CLogger::GetInstance().AddLog(CLogger::LOG_NETWORK, str);
 			str.Empty();
 		}
 

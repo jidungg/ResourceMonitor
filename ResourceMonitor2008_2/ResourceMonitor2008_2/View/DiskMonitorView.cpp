@@ -152,7 +152,7 @@ void CDiskMonitorView::AddPeriodicLog()
 		str += m_frameCaptions[i] + _T(": ");
 		str += m_farmeList.GetItemText(0, i + 1) + _T(", ");
 	}
-	sLogger.AddLog(CLogger::LOG_DISK, str);
+	CLogger::GetInstance().AddLog(CLogger::LOG_DISK, str);
 
 	pHeaderCtrl = m_processList.GetHeaderCtrl();
 	int tableColCount = pHeaderCtrl->GetItemCount();
@@ -171,7 +171,7 @@ void CDiskMonitorView::AddPeriodicLog()
 				str += m_tableCaptions[tableColCount - i - 1] + _T(": ");
 				str += m_processList.GetItemText(j, i) + _T(", ");
 			}
-			sLogger.AddLog(CLogger::LOG_DISK, str);
+			CLogger::GetInstance().AddLog(CLogger::LOG_DISK, str);
 			str.Empty();
 		}
 

@@ -7,13 +7,72 @@
 
 
 // CLogger
-
+CLogger* CLogger::_instance = NULL;
 CLogger::CLogger()
 {
+	LSTATUS lstRes = ERROR_SUCCESS;
+	DWORD dwDisp = 0;
+
+	lstRes = ::RegCreateKeyEx( HKEY_LOCAL_MACHINE,LOG_PATH_REG,0, NULL
+		, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | KEY_WOW64_64KEY
+		,NULL,&m_hLogPathRegKey, &dwDisp );
+
+	if ( ERROR_SUCCESS == lstRes ) 
+	{ 
+		//AfxMessageBox( _T( "Create" ) ); 
+	} 
+	else 
+	{ 
+		//AfxMessageBox( _T( "Create Fail" ) ); 
+	}
+
+ 
+	lstRes = ::RegOpenKeyEx( HKEY_LOCAL_MACHINE, LOG_PATH_REG, 
+		0, KEY_ALL_ACCESS | KEY_WOW64_64KEY, &m_hLogPathRegKey ); 
+	if ( ERROR_SUCCESS == lstRes ) 
+	{ 
+		//AfxMessageBox( _T( "open" ) ); 
+	} 
+	else if(lstRes == ERROR_FILE_NOT_FOUND)
+	{ 
+		//AfxMessageBox( _T( "open Fail" ) ); 
+	}
+
+	CString sValName = LOG_PATH_REG_VALUENAME;
+	DWORD dwBufSiz = 0;
+	TCHAR atcvalue[MAX_PATH];
+	ZeroMemory( atcvalue, sizeof( atcvalue ) );
+	lstRes = ::RegQueryValueEx( m_hLogPathRegKey, sValName, NULL, NULL, NULL, &dwBufSiz );
+	if ( ERROR_SUCCESS == lstRes ) {
+		TCHAR atcvalue[MAX_PATH];
+		ZeroMemory( atcvalue, sizeof( atcvalue ) );
+		lstRes = ::RegQueryValueEx( m_hLogPathRegKey, sValName, NULL, NULL, (LPBYTE)atcvalue, &dwBufSiz );
+		if ( ERROR_SUCCESS == lstRes ) 
+		{
+			m_sLogPath.Format( _T( "%s" ), atcvalue );
+			//AfxMessageBox( m_sLogPath );
+		}
+		else 
+		{ 
+			AfxMessageBox( m_sLogPath ); 
+		} 
+	}else
+	{
+		SetLogPath(LOG_DIRECTORY);
+	}
+
+
 }
 
 CLogger::~CLogger()
 {
+	LSTATUS lstRes = ERROR_SUCCESS;
+	if ( NULL != m_hLogPathRegKey ) 
+	{ 
+		lstRes = ::RegCloseKey( m_hLogPathRegKey );
+		m_hLogPathRegKey = NULL; 
+	}
+
 }
 
 void CLogger::AppendLogData(int nflag, LPCTSTR szFmt, ...)
@@ -138,9 +197,9 @@ void CLogger::AddLog(CLogger::LogDirectory nflag, LPCTSTR lpszFormat, ...)
 		break;
 	}
 
-	if (IsCreate(nflag) != TRUE)
+	//if (IsCreate(nflag) != TRUE)
 	{
-		Create(nflag, LOG_DIRECTORY, str);
+		Create(nflag, m_sLogPath, str);
 	}
 
 	va_list args;
@@ -166,5 +225,19 @@ void CLogger::Create(int nflag, CString strDir, CString strFileName)
 BOOL CLogger::IsCreate(int nflag)
 {
 	return m_bCreateFileFlag[nflag - 1];
+	//return _waccess_s();
 }
 
+void CLogger::SetLogPath(CString path)
+{
+	m_sLogPath = path;
+
+	LSTATUS lstRes = ERROR_SUCCESS;
+	CString sValName = LOG_PATH_REG_VALUENAME;
+	CString sVal = path;
+	TCHAR atcvalue[MAX_PATH];
+	ZeroMemory( atcvalue, sizeof( atcvalue ) );
+	_tcscpy_s( atcvalue, sVal.GetLength() + 1, sVal.GetBuffer() );
+	lstRes = ::RegSetValueEx( m_hLogPathRegKey,sValName, 0, REG_SZ, (LPBYTE)atcvalue, 2*(sVal.GetLength()+1) );
+
+}

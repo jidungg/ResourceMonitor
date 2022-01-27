@@ -16,6 +16,7 @@
 #define LOG_DISK_THRESHOLD 10240
 #define LOG_DIRECTORY _T("D:\\Performance_data_Log")
 
+
 #define LOG_TOP_N 10
 
-#define AVG_CALC_COUNT 60
+#define AVG_CALC_COUNT 30

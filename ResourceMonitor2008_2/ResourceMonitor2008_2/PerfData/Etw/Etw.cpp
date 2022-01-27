@@ -12,6 +12,8 @@
 #include "Etw.h"
 #include "../../ResourceMonitorDoc.h"
 #include "EtwData.h"
+#include <tlhelp32.h>  
+
 
 using namespace std;
 
@@ -19,11 +21,33 @@ static TRACEHANDLE		m_SessionHandle;
 static VOID WINAPI StaticRecordEventCallback(PEVENT_RECORD pEvent);
 static DWORD WINAPI Win32TracingThread(LPVOID Parameter);
 EVENT_TRACE_PROPERTIES* m_pSessionProperties;
+BOOLEAN EtEtwEnabled = FALSE;
+BOOLEAN EtpStartedSession = FALSE;
+
 void ProcessDiskEvent(const ETW_DISK_EVENT& Event);
 void ProcessNetworkEvent(const ETW_NETWORK_EVENT& Event);
 
 map<ULONG, ProcessDiskData> CEtw::diskMapRealTime;
 map<ULONG, ProcessNetworkData> CEtw::networkMapRealTIme;
+
+ #define STATUS_INFO_LENGTH_MISMATCH 0xC0000004  
+#define XGetPtr(base, offset) ((PVOID)((ULONG_PTR) (base) + (ULONG_PTR) (offset)))  
+#define SYSTEM_PROCESS_ID ((HANDLE)4)
+#define PH_NEXT_PROCESS(Process) ( \
+    ((PRSYSTEM_PROCESS_INFORMATION)(Process))->NextEntryOffset ? \
+    (PRSYSTEM_PROCESS_INFORMATION)PTR_ADD_OFFSET((Process), \
+    ((PRSYSTEM_PROCESS_INFORMATION)(Process))->NextEntryOffset) : \
+    NULL \
+    )
+#define PTR_ADD_OFFSET(Pointer, Offset) ((PVOID)((ULONG_PTR)(Pointer) + (ULONG_PTR)(Offset)))
+#define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR)-1)
+
+typedef   
+NTSTATUS   
+(WINAPI *NtQuerySystemInformationT)  
+(SYSTEM_INFORMATION_CLASS, PVOID, ULONG, PULONG);
+
+
 
 CEtw::CEtw(void)
 {
@@ -100,6 +124,18 @@ void CEtw::StartTraceKernelLogger()
 
 	m_status = StartTrace((PTRACEHANDLE)&m_SessionHandle, KERNEL_LOGGER_NAME, m_pSessionProperties);
 
+	if (m_status == ERROR_SUCCESS)
+    {
+        EtEtwEnabled = TRUE;
+        EtpStartedSession = TRUE;
+    }
+    else if (m_status == ERROR_ALREADY_EXISTS)
+    {
+        EtEtwEnabled = TRUE;
+
+        EtpStartedSession = FALSE;
+
+    }
 	if (ERROR_SUCCESS != m_status)
 	{
 		if (ERROR_ALREADY_EXISTS == m_status)
@@ -138,6 +174,153 @@ void CEtw::OpenTraceKernelLogger()
 	}
 
 }
+// ToolHelper Usage
+//ULONG EtThreadIdToProcessId(_In_ ULONG ThreadId)
+//{
+//	static HANDLE snapshot;  
+//    THREADENTRY32 te32;  
+//    ULONGLONG tickCount;
+//	static ULONGLONG lastTickTotal = 0;
+//
+//	tickCount = GetTickCount();
+//
+//	if (tickCount - lastTickTotal >= 2 * 1000)
+//	{
+//		lastTickTotal = tickCount;
+//		CloseHandle(snapshot);
+//		snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);  
+//		if(snapshot == INVALID_HANDLE_VALUE)  
+//			return -1; 
+//	}
+//  
+//    te32.dwSize = sizeof(te32);  
+//    if(!Thread32First(snapshot, &te32))  
+//    {  
+//        CloseHandle(snapshot);  
+//        return -1;  
+//    }  
+//  
+//    do  
+//    {  
+//        try  
+//        {  
+//			if(ThreadId == te32.th32ThreadID)
+//			{	
+//				return te32.th32OwnerProcessID;
+//			}
+//  
+//        }  
+//        catch(...)  
+//        {  
+//            CloseHandle(snapshot);  
+//            return -1;  
+//        }  
+//  
+//    } while(Thread32Next(snapshot, &te32));  
+//  
+//    //CloseHandle(snapshot);  
+//    return 4;  //system process id
+//
+//
+//}
+
+//USE NtQuerySystemInformation
+LONG PhEnumProcesses(
+    _Out_ PUCHAR *Processes
+    )
+{
+	HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");  
+    NtQuerySystemInformationT pNTQSI;  
+    pNTQSI = (NtQuerySystemInformationT)   
+            GetProcAddress(ntdll, "NtQuerySystemInformation"); 
+
+	static ULONG initialBufferSize =0x4000; 
+    LONG status;
+    ULONG classIndex;
+    PUCHAR  buffer;
+    ULONG bufferSize;
+
+
+    bufferSize = initialBufferSize;
+    buffer = new UCHAR[bufferSize];
+
+    while (TRUE)
+    {
+        status = pNTQSI(SystemProcessInformation,buffer,bufferSize,&bufferSize);
+	/*	NtQuerySystemInformation(
+            SystemProcessInformation,
+            buffer,
+            bufferSize,
+            &bufferSize
+            );*/
+
+        if (status == 0xC0000023L || status == 0xC0000004L) // STATUS_BUFFER_TOO_SMALL || STATUS_INFO_LENGTH_MISMATCH
+        {
+            delete [] buffer;
+            buffer =  new UCHAR[bufferSize];
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (!(status >= 0))
+    {
+        delete [] buffer;
+        return status;
+    }
+
+    if (bufferSize <= 0x100000) initialBufferSize = bufferSize;
+    *Processes = buffer;
+
+    return status;
+}
+HANDLE EtThreadIdToProcessId(
+    _In_ HANDLE ThreadId
+    )
+{
+    // Note: no lock is needed because we use the list on the same thread (EtpEtwMonitorThreadStart). (dmex)
+   
+	static PUCHAR processInfo = NULL;
+    static ULONG64 lastTickTotal = 0;
+    PRSYSTEM_PROCESS_INFORMATION  process;
+    ULONG64 tickCount;
+
+    tickCount = GetTickCount();
+
+    if (tickCount - lastTickTotal >= 2 * CLOCKS_PER_SEC)
+    {
+        lastTickTotal = tickCount;
+
+        if (processInfo)
+        {
+            delete [] processInfo;
+            processInfo = NULL;
+        }
+
+        PhEnumProcesses(&processInfo);
+    }
+
+    process = (PRSYSTEM_PROCESS_INFORMATION)processInfo;
+
+	do
+    {
+		//PRSYSTEM_THREAD_INFORMATION threads;  
+  //      threads = (PRSYSTEM_THREAD_INFORMATION) XGetPtr(process, sizeof(*process));
+        for (ULONG i = 0; i < process->NumberOfThreads; i++)
+        {
+            //if (threads[i].ClientId.UniqueThread == ThreadId)
+			if (process->Threads[i].ClientId.UniqueThread == ThreadId)
+			{
+                return process->UniqueProcessId;
+            }
+        }
+		//process = (PRSYSTEM_PROCESS_INFORMATION) XGetPtr(process, process->NextEntryOffset);
+	}  while (process = PH_NEXT_PROCESS(process));
+
+    return SYSTEM_PROCESS_ID;
+}
 static VOID WINAPI StaticRecordEventCallback(PEVENT_RECORD pEvent)
 {
 	if (IsEqualGUID(pEvent->EventHeader.ProviderId, DiskIoGuid_I))
@@ -152,27 +335,39 @@ static VOID WINAPI StaticRecordEventCallback(PEVENT_RECORD pEvent)
 		{
 		case EVENT_TRACE_TYPE_IO_READ: // send
 			diskEvent.Type = EtwDiskReadType;
-			//diskReadMap[pEvent->EventHeader.ProcessId] = *data;
 			break;
 		case EVENT_TRACE_TYPE_IO_WRITE: // receive
 			diskEvent.Type = EtwDiskWriteType;
-			//diskWriteMap[pEvent->EventHeader.ProcessId] = data->TransferSize;
 			break;
 		}
 		if (diskEvent.Type != EtwMax)
 		{
+
 			DiskIo_TypeGroup1 *data = (DiskIo_TypeGroup1 *)pEvent->UserData;
-			if (pEvent->EventHeader.ProcessId != ULONG_MAX)
+			if(IS_WINVERSION_UPPER_8)
 			{
-				diskEvent.ProcessHandle = UlongToHandle(pEvent->EventHeader.ProcessId);
-				diskEvent.ProcessID = pEvent->EventHeader.ProcessId;
+
+				//diskEvent.ClientId.UniqueProcess= GetProcessIdOfThread(OpenThread(THREAD_QUERY_INFORMATION| THREAD_QUERY_LIMITED_INFORMATION ,TRUE,data->IssuingThreadId));
+
+				//NtQuerySystemInformation으로 프로세스의 스레드 목록 얻기
+				diskEvent.ClientId.UniqueThread = UlongToHandle(data->IssuingThreadId);
+				diskEvent.ClientId.UniqueProcess =EtThreadIdToProcessId(diskEvent.ClientId.UniqueThread);
+			}else
+			{
+				if (pEvent->EventHeader.ProcessId != ULONG_MAX)
+				{
+					diskEvent.ClientId.UniqueProcess = UlongToHandle(pEvent->EventHeader.ProcessId);
+					//diskEvent.ClientId.UniqueProcess = pEvent->EventHeader.ProcessId;
+				}
 			}
+
 			diskEvent.IrpFlags = data->IrpFlags;
 			diskEvent.TransferSize = data->TransferSize;
 			diskEvent.FileObject = (PVOID)data->FileObject;
 			diskEvent.HighResResponseTime = data->HighResResponseTime;
 
 			ProcessDiskEvent(diskEvent);
+
 		}
 
 	}
@@ -233,7 +428,7 @@ static VOID WINAPI StaticRecordEventCallback(PEVENT_RECORD pEvent)
 			ProcessNetworkEvent(networkEvent);
 
 		}
-		
+
 	}
 }
 static DWORD WINAPI Win32TracingThread(LPVOID Parameter)
@@ -245,18 +440,21 @@ static DWORD WINAPI Win32TracingThread(LPVOID Parameter)
 void ProcessDiskEvent(const ETW_DISK_EVENT& Event)
 {
 	map<ULONG, ProcessDiskData>* map = &CEtw::diskMapRealTime;
-	if(map->count(Event.ProcessID) == 0)
+	ULONG processID = (ULONG)Event.ClientId.UniqueProcess;
+	//processID = GetProcessId(Event.ClientId.UniqueProcess);
+	//TRACE("ProcessID : %d, UniqueProcess : %d \n",processID, Event.ClientId.UniqueProcess);
+	if(map->count(processID) == 0)
 	{
-		(*map)[Event.ProcessID] = ProcessDiskData(0,0);
+		(*map)[processID] = ProcessDiskData(0,0);
 	}
 
 	if(Event.Type == EtwDiskReadType)
 	{
-		(*map)[Event.ProcessID].readBtyes += Event.TransferSize;
+		(*map)[processID].readBtyes += Event.TransferSize;
 	}
 	else if(Event.Type == EtwDiskWriteType)
 	{
-		(*map)[Event.ProcessID].writeBytes += Event.TransferSize;
+		(*map)[processID].writeBytes += Event.TransferSize;
 	}
 
 	return;
@@ -283,11 +481,31 @@ void ProcessNetworkEvent(const ETW_NETWORK_EVENT& Event)
 
 void CEtw::Update()
 {
+	//Flush EtwSession
+	//if (m_SessionHandle != (TRACEHANDLE)INVALID_HANDLE_VALUE)
+	//{
+	//	if (EtEtwEnabled)
+	//	{
+	//		m_pSessionProperties->LogFileNameOffset = 0; // make sure it is 0, otherwise ControlTrace crashes
+
+	//		ControlTrace(
+	//			EtpStartedSession ? m_SessionHandle : 0,
+	//			EtpStartedSession ? NULL : KERNEL_LOGGER_NAME,
+	//			m_pSessionProperties,
+	//			EVENT_TRACE_CONTROL_FLUSH
+	//			);
+	//	}
+
+	//}
+
+	//Update
 	UpdateDisk();
 	UpdateNetwork();
 }
 void CEtw::UpdateDisk()
 {
+
+
 	for(map<ULONG, ProcessDiskData>::iterator it = diskMapRealTime.begin(); it != diskMapRealTime.end(); it ++)
 	{
 		ProcessDiskDataQ popData;
@@ -311,10 +529,10 @@ void CEtw::UpdateDisk()
 			{
 				popData = diskQue[id].front();
 				diskQue[id].pop();
-				
+
 			}
 			diskQue[id].push(ProcessDiskDataQ(it->second.readBtyes,it->second.writeBytes));
-			
+
 		}
 		if(!(it->second.readBtyes == 0 && it->second.writeBytes == 0))
 		{
@@ -334,7 +552,7 @@ void CEtw::UpdateDisk()
 
 		it->second.readBtyes = 0;
 		it->second.writeBytes = 0;
-		
+
 	}
 
 	FindDiskOutProc();
@@ -367,10 +585,10 @@ void CEtw::UpdateNetwork()
 			{
 				popData = networkQue[id].front();
 				networkQue[id].pop();
-				
+
 			}
 			networkQue[id].push(ProcessNetworkDataQ(it->second.receiveBytes,it->second.sendBytes));
-			
+
 		}
 		if(!(it->second.receiveBytes == 0 && it->second.sendBytes == 0))
 		{
@@ -393,14 +611,14 @@ void CEtw::UpdateNetwork()
 
 		it->second.receiveBytes = 0;
 		it->second.sendBytes = 0;
-		
+
 	}
 	if(m_totlaAvgLength < AVG_CALC_COUNT)
 	{
 		m_totlaAvgLength ++;
 	}
 	FindNetworkOutProc();
-	
+
 }
 void CEtw::FindNetworkOutProc()
 {
